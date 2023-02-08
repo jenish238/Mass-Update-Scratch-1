@@ -1,4 +1,8 @@
 ({
+    onChange: function (component, event, helper) {
+        component.set("v.operation", component.find('select').get('v.value'));
+        alert(cmp.find('select').get('v.value') + ' pie is good.');
+    },
     doinit: function (component, event, helper) {
         component.set("v.IsSpinner", true);
         helper.searchHelper(component, event, helper);
@@ -7,7 +11,6 @@
 
         console.log('object main====>' + component.get("v.ObjectListMain"));
     },
-
     onblur: function (component, event, helper) {
         component.set("v.listOfSearchRecords", null);
         var forclose = component.find("searchRes");
@@ -28,7 +31,7 @@
     onChangeObject: function (component, event, helper) {
         helper.onChangeObject(component, event, helper);
     },
-
+    //    first next button
     callNexthandle: function (component, event, helper) {
         helper.callNexthandle(component, event, helper);
     },
@@ -142,7 +145,7 @@
     deleteMapRow: function (component, event, helper) {
         helper.deleteMapRowRecord(component, event, helper);
     },
-
+    // second next button
     callNextButton: function (component, event, helper) {
 
         console.log('next Button called');

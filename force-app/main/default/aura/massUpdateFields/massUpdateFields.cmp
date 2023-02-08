@@ -25,6 +25,7 @@
     <aura:attribute name="apiListofObject" type="object[]" />
     <aura:attribute name="progress" type="Integer" default="0"/>
     <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    <aura:attribute name="operation" type="String" default="choose one..." />  
      <!-- jenish gangani 2/2/23 -->
 
     <aura:attribute name="allDataList" type="object[]" />
@@ -176,6 +177,17 @@
                             </aura:if>
                         </div>
                         <div class="slds-p-around_medium" style="width:70%;margin-left:15%;">
+
+                            <!-- jenish gangani 8/2/23 -->
+                            <lightning:select aura:id="select" name="select" label="Select a operation:" onchange="{! c.onChange }">
+                                <!-- required="true" -->
+                                        <option value="">choose one...</option>
+                                        <option value="insert">insert</option>
+                                        <option value="update">update</option>
+                                        <option value="delete">delete</option>
+                                        </lightning:select>
+                                    <br/>
+                             <!-- jenish gangani 8/2/23  -->
                             <c:importCsvFile  header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
                             <!-- <lightning:fileUpload aura:id = "file"
                                     onuploadfinished="{!c.showcsvdata}"
@@ -183,6 +195,7 @@
                                     accept = ".csv"
                                     label = "Please upload file"
                                     multiple = "false" /> -->
+                                        
                             <br/>
                             
                             <div class="slds-float_right slds-col">
@@ -243,7 +256,12 @@
                             </section>
                         </aura:if>
                     </div>
-                    <div class="slds-p-around--medium" style="width:70%;margin-left:15%;">                        
+
+                    <!-- 8/2/23   jenish ganagani -->
+                   
+                    <div class="slds-p-around--medium" style="width:70%;margin-left:15%;">  
+                        <!-- insert and update condition -->
+                        <aura:if isTrue="{!v.operation=='update'}">               
                         <h1 style="font-size:18px"><b>Data Matching Criteria:</b>
                             <aura:if isTrue="{!greaterthan(v.header.length,v.tableListData.length)}">
                                 <div class="slds-float_right">Add Fields&nbsp;&nbsp;
@@ -297,6 +315,7 @@
                                 </tbody>
                             </aura:iteration>    
                         </table>
+                        </aura:if>       
                         <div class="slds-clearfix slds-grid slds-gutter">
                             <div class="slds-align-left slds-col">
                                 <!-- <aura:if isTrue="{!v.SelectFieldHelp}">
@@ -311,7 +330,9 @@
                                 </aura:if> -->
                             </div> 
                         </div>
+                       
                         <br/><br/>
+                         
                         <!--Mapp Fileds-->
                         <h1 style="font-size:18px"><b>CSV &amp; Salesforce Field Mapping:</b> 
                             <aura:if isTrue="{!greaterthan(v.header.length,v.FieldToUpdateList.length)}">
@@ -358,6 +379,7 @@
                             </tbody>
                         </table><br/><br/>
                         <!-- Salesofrce Selected Object Fileds List -->
+                        <aura:if  isTrue="{!v.operation=='update'}">
                         <h1 style="font-size:18px"><b>Display Salesforce fields:</b></h1><br/>
                         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                             <thead>
@@ -422,6 +444,7 @@
                                 </aura:iteration>
                             </tbody>
                         </table><br/>
+                        </aura:if>
                         {!v.currentStep}
                         <div class="slds-clearfix">
                             <div class="slds-float_right"> 
