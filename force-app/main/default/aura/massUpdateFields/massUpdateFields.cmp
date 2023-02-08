@@ -1,0 +1,511 @@
+<aura:component controller="updateFieldsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    
+    <aura:handler  name="init" value="{!this}" action="{!c.doinit}"/>
+    <aura:attribute name="UserEmail" type="String" default=""/>
+    <aura:attribute name="listOfSearchRecords" type="List" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="selectedObject" type="string" default=""/>
+    <aura:attribute name="lnme" type="String" default=""/>
+    <aura:attribute name="label" type="String" default=""/>
+    <aura:attribute name="IconName" type="String" default=""/>
+    <aura:attribute name="fieldList" type="SObject" />
+    <aura:attribute name="ObjectListMain" type="List" />
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    <aura:attribute name="visibileInputBox" type="Boolean" default="false" />
+    <aura:attribute name="visibileButton" type="Boolean" default="true" />
+    <aura:attribute name="srno" type="Integer" />
+    <aura:attribute name="currentStep" type="String" default="Step1" />  
+    <aura:attribute name="finished" type="Boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="tabledata" type="object[]" />
+    <aura:attribute name="header" type="object[]" />
+
+
+    <!-- jenish ganganai 2/2/23 -->
+    <aura:attribute name="apiListofObject" type="object[]" />
+    <aura:attribute name="progress" type="Integer" default="0"/>
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+     <!-- jenish gangani 2/2/23 -->
+
+    <aura:attribute name="allDataList" type="object[]" />
+    <aura:attribute name="addDeleteBoolean" type="boolean"  default="false"/>
+    <aura:attribute name="tableListData" type="List"/>
+    <aura:attribute name="selectedFields" type="List"/>
+    <aura:attribute name="ResultOfAllData" type="List"/>    
+    <aura:attribute name="TableLightningData" type="List"/>
+    <aura:attribute name="FieldToUpdateList" type="List"/>
+    <aura:attribute name="updateFieldList" type="String" />
+    <aura:attribute name="IsSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="sfId" type="Integer"/>
+    <aura:attribute name="EmailId" type="String" default="Email" />  
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="50"/>
+    <aura:attribute name="totalPage" type="Integer" default="0"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/>
+
+    <aura:attribute name="toastMsg" type="String"/>
+    <aura:attribute name="toastDescMsg" type="String"/>
+    
+    <aura:attribute name="selectObjectHelp" type="boolean" default="false"/>
+    <aura:attribute name="SelectFieldHelp" type="boolean" default="false"/>    
+
+        <!-- jenish ganganai 2/2/23 -->
+    <aura:attribute name="stepOneNextButton" type="boolean" default="false"/>
+    <aura:attribute name="CriteriaDeleteButton" type="boolean" default="true"/>
+    <aura:attribute name="FieldMappingDeleteButton" type="boolean" default="false"/>
+          <!-- jenish ganganai 2/2/23 -->
+
+          <!-- jenish gangani 7/2/23 -->
+    <aura:handler name="disableNextButton" event="c:disableButtonEvent" action="{!c.handleNextButton}" />
+          <!-- jenish gangani 7/2/23 -->
+
+    
+    <aura:if isTrue="{!v.finished == false}">
+        <div>
+            <article class="slds-card">
+                <div class="slds-card__body slds-card__body_inner">
+                    <div class="slds-path">
+                        <div class="slds-grid slds-path__track">
+                            <div class="slds-grid slds-path__scroller-container">
+                                <div class="slds-path__scroller" role="application">
+                                    <div class="slds-path__scroller_inner">
+
+
+                                            <!-- Progress Bar-->
+                                        <div class="slds-grid slds-p-left_medium slds-p-right_medium">
+                                            <div class="slds-tabs--path" role="application">
+                                                <ul class="slds-tabs--path__nav" role="tablist">
+                                                    <li aura:id="step1Indicator"  class="slds-tabs--path__item slds-is-current" role="presentation" >
+                                                        <a class="slds-tabs--path__link" id="tabs-path-2326" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">
+                                                            <span class="slds-tabs--path__stage">
+                                                                <lightning:icon iconName="utility:check" size="x-small" class="comments-icn" alternativeText="Indicates approval"/>
+                                                            </span>
+                                                            <span class="slds-tabs--path__title" style="color:rgb(255, 255, 255);"><div class="">Drag And Drop CSV File</div></span>
+                                                        </a>
+                                                    </li>
+                                                    <li aura:id="step2Indicator"  class="slds-tabs--path__item slds-is-incomplete" role="presentation">
+                                                        <a class="slds-tabs--path__link" id="tabs-path-2327" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">
+                                                            <span class="slds-tabs--path__stage">
+                                                                <lightning:icon iconName="utility:check" size="x-small" alternativeText="Indicates approval"/>
+                                                            </span>
+                                                            <span class="slds-tabs--path__title" style="color:rgb(0, 0, 0);"><div aura:id="secoundColour">Fields Mapping</div></span>
+                                                        </a>
+                                                    </li>
+                                                    <li aura:id="step3Indicator" value="step3" class="slds-tabs--path__item slds-is-incomplete" role="presentation">      
+                                                        <a class="slds-tabs--path__link" id="tabs-path-2328" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">
+                                                            <span class="slds-tabs--path__stage">
+                                                                <lightning:icon iconName="utility:check" size="x-small" alternativeText="Indicates approval"/>
+                                                            </span>
+                                                            <span class="slds-tabs--path__title" style="color:rgb(0, 0, 0) !important;"><div aura:id="thirdColour">Update Fields</div></span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <!-- End of Progress Bar -->
+                                        <!-- <div class="slds-align_absolute-center" style="height: 5rem;">
+                                        <lightning:button onclick="{!c.changePath}" label="Update Path"/>
+                                        </div> -->
+
+
+
+
+
+
+                                        <!-- <lightning:progressIndicator  aura:id="path" currentStep="{!v.currentStep}" type="path" variant="base">
+                                            <lightning:progressStep label="Drag And Drop CSV File" value="Step1"/>  
+                                            <lightning:progressStep label="Fields Mapping" value="Step2" />
+                                            <lightning:progressStep label="Update Fields" value="Step3" />
+                                        </lightning:progressIndicator>  -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article><br/>     
+            
+            <aura:if isTrue="{!v.toastMsg != null}">
+                <div class="demo-only" style="height: 4rem;" id='ToastMessage'>
+                    <div class="slds-notify_container slds-is-relative">
+                        <div class="{!v.toastMsg == 'success' ? 'slds-notify slds-notify_toast slds-theme_success' : v.toastMsg == 'Info' ? 'slds-notify slds-notify_toast slds-theme_info' : 'slds-notify slds-notify_toast slds-theme_error' }" role="alert">                            
+                            <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="">
+                                <aura:if isTrue="{!v.toastMsg == 'success'}">
+                                    <lightning:icon iconName="utility:check" size="small" variant="inverse" alternativeText="Add"/>
+                                    <aura:set attribute="else">
+                                    	<aura:if isTrue="{!v.toastMsg == 'Info'}">
+                                            <lightning:icon iconName="utility:info" size="small" variant="inverse" alternativeText="Add"/>
+                                            <aura:set attribute="else">
+                                                <lightning:icon iconName="utility:close" size="small" variant="inverse" alternativeText="Add"/>	
+                                            </aura:set>
+                                        </aura:if>
+                                    </aura:set>
+                                </aura:if>
+                            </span>
+                            <div class="slds-notify__content">
+                                <h2 class="slds-text-heading_small ">{!v.toastDescMsg}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.currentStep == 'Step1'}">
+                <aura:if isTrue="{!v.IsSpinner}">
+                    <lightning:spinner variant="brand"  size="large" />
+                </aura:if> 
+                <lightning:card>
+                    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+                        <div class="slds-float_right" style="margin-right:1%">
+                            <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
+                                <a>Help?</a>
+                            </div>
+                            <br/>
+                            <aura:if isTrue="{!v.selectObjectHelp}">
+                                <br/>
+                                <section aria-describedby="dialog-body-id-101" aria-labelledby="dialog-heading-id-106" class="slds-popover slds-nubbin_top-right slds-popover_small" role="dialog">
+                                    
+                                    <!-- <header class="slds-popover__header">
+                                    <h2 class="slds-text-heading_small" id="dialog-heading-id-106">Help</h2>
+                                    </header> -->
+                                    <div class="slds-popover__body" id="dialog-body-id-101">
+                                    <p>If you can't see Object(s) or Field(s) to Update. Please contact your System Administrator.</p>
+                                    </div>
+                                </section>
+                            </aura:if>
+                        </div>
+                        <div class="slds-p-around_medium" style="width:70%;margin-left:15%;">
+                            <c:importCsvFile  header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
+                            <!-- <lightning:fileUpload aura:id = "file"
+                                    onuploadfinished="{!c.showcsvdata}"
+                                    name = "file"
+                                    accept = ".csv"
+                                    label = "Please upload file"
+                                    multiple = "false" /> -->
+                            <br/>
+                            
+                            <div class="slds-float_right slds-col">
+                                <lightning:helptext content="Type your object name to find it quickly."/>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <lightning:select name="lookupField" label="Select Object:" aura:id="lookupField" value="{!v.selectedObject}" onchange="{!c.onChangeObject}">
+                                    <option value="">choose one...</option>
+                                    <aura:iteration items="{!v.ObjectListMain}" var="option">
+                                        <option text="{!option.label}" value="{!option.value}"/>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div>
+                            <div class="slds-clearfix slds-grid slds-gutter">
+                                <div class="slds-align-left slds-col">
+                                    <!-- <aura:if isTrue="{!v.selectObjectHelp}">
+                                        <div class="slds-box slds-theme_shade slds-theme_alert-texture">
+                                            If you do not see the object you want to update, is because you do not have the permission to update the object record! Please contact your system administrator.
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div onclick="{!c.showSelectObjectHelp}">
+                                                <a>Can not see an Object to update?</a>
+                                            </div>
+                                        </aura:set>
+                                    </aura:if> -->
+                                </div>
+                            </div>
+                            {!v.currentStep}
+                            <div class="slds-clearfix">
+                                <div class="slds-float_right"> 
+                                    <lightning:button disabled="{!v.stepOneNextButton}" variant="brand" aura:id="save" value="{!v.currentStep}" label="Next" title="Next" onclick="{! c.callNexthandle }"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </lightning:card>
+            </aura:if>
+            <aura:if isTrue="{!v.currentStep == 'Step2'}">
+                <aura:if isTrue="{!v.IsSpinner}">
+                    <lightning:spinner variant="brand"  size="large" />
+                </aura:if>
+                <lightning:card>
+                    <div class="slds-float_right" style="margin-right:1%">
+                        <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
+                            <a>Help?</a>
+                        </div>
+                        <br/>
+                        <aura:if isTrue="{!v.selectObjectHelp}">
+                            <br/>
+                            <section aria-describedby="dialog-body-id-101" aria-labelledby="dialog-heading-id-106" class="slds-popover slds-nubbin_top-right slds-popover_small" role="dialog">
+                                
+                                <!-- <header class="slds-popover__header">
+                                <h2 class="slds-text-heading_small" id="dialog-heading-id-106">Help</h2>
+                                </header> -->
+                                <div class="slds-popover__body" id="dialog-body-id-101">
+                                <p>If you can't see Object(s) or Field(s) to Update. Please contact your System Administrator.</p>
+                                </div>
+                            </section>
+                        </aura:if>
+                    </div>
+                    <div class="slds-p-around--medium" style="width:70%;margin-left:15%;">                        
+                        <h1 style="font-size:18px"><b>Data Matching Criteria:</b>
+                            <aura:if isTrue="{!greaterthan(v.header.length,v.tableListData.length)}">
+                                <div class="slds-float_right">Add Fields&nbsp;&nbsp;
+                                    <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addRow}"/>
+                                </div>
+                            </aura:if>
+                        </h1>
+                        <br/>
+                        
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr>
+                                    <th>CSV Fields</th>
+                                    <th><div class="slds-align_absolute-center">Operator</div></th>
+                                    <th>
+                                        <div class="slds-grid slds-gutters">
+                                            <div class="slds-col">
+                                                Salesforce Fields
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <aura:iteration items="{!v.tableListData}" var="data" indexVar="index">  
+                                <tbody>                                    
+                                    <tr>
+                                        <td style="width: 30%;">        
+                                            <lightning:select aura:id="selectDropValues" name="csvHeaderKey" value="{!data.csvfield}" messageWhenValueMissing="Please Select this field" required="true" >
+                                                <option value="">choose one...</option>                                                
+                                                <aura:iteration items="{!v.header}" var="row"> 
+                                                    <option value="{!row}">{!row}</option> 
+                                                </aura:iteration>
+                                            </lightning:select>
+                                        </td>
+                                        <td>
+                                            <div class="slds-align_absolute-center"><b style="font-size: x-large;">=</b></div>
+                                        </td>
+                                        <td>
+                                            <lightning:select aura:id="selectDropValues" name="SObjectSelectedFields" messageWhenValueMissing="Please Select this field" required="true" value="{!data.SObjectField}">
+                                                <option value="">choose one...</option>
+                                                <aura:iteration items="{!v.fieldList}" var="fl1">
+                                                    <option value="{!fl1.apiName}">{!fl1.label}</option>
+                                                </aura:iteration>
+                                            </lightning:select>
+                                        </td>
+                                        <td>
+                                            <lightning:buttonIcon disabled="{!v.CriteriaDeleteButton}" name="{!index}" iconName="utility:delete"  size="large" variant="bare" alternativeText="Delete" onclick="{!c.deleteRow}"/>  
+                                        </td> 
+                                    </tr>
+                                </tbody>
+                            </aura:iteration>    
+                        </table>
+                        <div class="slds-clearfix slds-grid slds-gutter">
+                            <div class="slds-align-left slds-col">
+                                <!-- <aura:if isTrue="{!v.SelectFieldHelp}">
+                                    <div class="slds-box slds-theme_shade slds-theme_alert-texture">
+                                        If you do not see the field you want to update, is because you do not have the permission to update the field! Please contact your system administrator.
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <div onclick="{!c.showSelectFieldHelp}">
+                                            <a>Can not see Field(s) to update?</a>
+                                        </div>
+                                    </aura:set>
+                                </aura:if> -->
+                            </div> 
+                        </div>
+                        <br/><br/>
+                        <!--Mapp Fileds-->
+                        <h1 style="font-size:18px"><b>CSV &amp; Salesforce Field Mapping:</b> 
+                            <aura:if isTrue="{!greaterthan(v.header.length,v.FieldToUpdateList.length)}">
+                                <div class="slds-float_right">Add MapFields&nbsp;&nbsp;
+                                    <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addMapRow}"/>
+                                </div>
+                            </aura:if>
+                        </h1>
+                        <br/>
+                        
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr>
+                                    <th>CSV Fields</th>
+                                    <th>Salesforce Fields</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.FieldToUpdateList}" var="row" indexVar="int">
+                                    <tr>
+                                        <td style="width: 30%;">
+                                            <lightning:select aura:id="selectDropValues" name="mapheader" value="{!row.csvfield}" onchange="{!c.PickListSelect}" messageWhenValueMissing="Please Select this field" required="true">
+                                                <option value="">choose one...</option>
+                                                <aura:iteration items="{!v.header}" var="hed">
+                                                    <option value="{!hed}">{!hed}</option> 
+                                                </aura:iteration>
+                                            </lightning:select>  
+                                        </td>
+                                        <td style="width: 60%;">
+                                            <lightning:select name="mapSObjectSelectedFields1" aura:id="selectDropValues" value="{!row.SObjectField}" messageWhenValueMissing="Please Select this field" required="true">
+                                                <option value="">choose one...</option>
+                                                <aura:iteration items="{!v.fieldList}" var="fl">
+                                                    <option value="{!fl.apiName}">{!fl.label}</option>
+                                                </aura:iteration>
+                                            </lightning:select>                                      
+                                            
+                                        </td>
+                                        <td>
+                                            <lightning:buttonIcon disabled="{!v.FieldMappingDeleteButton}" name="{!int}" iconName="utility:delete"  size="large" variant="bare" alternativeText="Delete" onclick="{!c.deleteMapRow}"/>  
+                                        </td> 
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table><br/><br/>
+                        <!-- Salesofrce Selected Object Fileds List -->
+                        <h1 style="font-size:18px"><b>Display Salesforce fields:</b></h1><br/>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr>  
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="srNo">Sr No</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="FieldsName">Label Name</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="FieldsApiName">Api Name</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="FieldsType">Type</div>
+                                    </th>                    
+                                    <th class="" scope="col"> 
+                                        <div class="slds-truncate" title="checkbox">
+                                            <lightning:input type="checkbox" checked="{!v.isSelectAll}" aura:id="checkboxfield" value="{!v.isSelectAll}" onchange="{!c.onSelectAllChange}"/>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.fieldList}" var="fl" indexVar="i">
+                                    <tr>
+                                        <td data-label="FieldsName">
+                                            <div class="slds-truncate" title="srNo">{!i+1}</div>  
+                                        </td>
+                                        
+                                        <td data-label="FieldsLabelName">
+                                            <aura:if>
+                                                <div class="slds-truncate" title="Label"><lightning:input type="text" id="labelName" name="labelName" value="{!fl.label}"/></div>
+                                                <aura:set attribute="else">
+                                                    <div class="slds-truncate" title="Label">{!fl.label}</div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                        <td data-label="FieldsApiName">
+                                            <aura:if isTrue="{!and(v.visibileInputBox,and(fl.Custfield,fl.apiName==v.lnme))}">
+                                                <div class="slds-truncate" title="apiName"><lightning:input type="text" id="apiName" name="apiName" value="{!fl.apiName}"/></div>
+                                                <aura:set attribute="else">
+                                                    
+                                                    <div class="slds-truncate" title="apiName">{!fl.apiName}</div>
+                                                    
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                        <td data-label="FieldsType">
+                                            <aura:if isTrue="{!fl.fieldType != 'REFERENCE'}">
+                                                <div class="slds-truncate" title="Size">{!fl.fieldType}&nbsp;{!fl.relationshipName}&nbsp;({!fl.fieldSize})</div>   
+                                                <aura:set attribute="else">
+                                                    <div class="slds-truncate" title="Size">{!fl.fieldType}&nbsp;{!fl.refrence}&nbsp;{!fl.relationshipName}&nbsp;({!fl.fieldSize})</div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </td>
+                                        <td data-label="checkBox">
+                                            <div class="slds-truncate" title="Name"><lightning:input  checked="{!fl.Custfield}" aura:id="checkboxfield" type="checkbox" name="{!fl.apiName}" /></div> <!--checboxfield -->
+                                        </td>
+                                        
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table><br/>
+                        {!v.currentStep}
+                        <div class="slds-clearfix">
+                            <div class="slds-float_right"> 
+                                <lightning:button variant="brand" aura:id="save" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.previousClikButton }"/>
+                                <lightning:button variant="brand" aura:id="next" value="{!v.currentStep}" label="Next" title="Next" onclick="{! c.callNextButton }"/>
+                            </div>
+                        </div>
+                    </div>
+                </lightning:card>
+            </aura:if>   
+        </div>
+        <aura:if isTrue="{!v.currentStep == 'Step3'}">
+            <aura:if isTrue="{!v.IsSpinner}">
+                <lightning:spinner variant="brand"  size="large" />
+            </aura:if>
+            <lightning:card>   
+                <div class="slds-p-around--medium" style="width:80%;margin-left:10%;">
+                    <!-- {!v.ResultOfAllData.length} -->
+                    
+                    <table>
+                        <tr>
+                            <td style="float:right">
+                                <div style="height: 20px;width: 20px;margin:3px;background-color: #c0d1f5;"><b style="padding-left: 22px;">SalesForceFields</b></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="float:right">
+                                <div style="height: 20px;width: 20px;margin:3px;background-color: #ecbbd9;"><b style="padding-left: 22px;">CSVFields</b></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="slds-clearfix">
+                        <div class="slds-page-header" role="banner">
+                            <p class="slds-page-header__title">Records</p>
+                        </div>
+                    </div>
+                    <lightning:datatable
+                                         class="datatableResult"
+                                         data = "{!v.TableLightningData}"
+                                         columns="{!v.columns}"
+                                         keyField="id"
+                                         hideCheckboxColumn="true"
+                                         row-number-offset = "0"/>
+                                         {!v.currentStep}
+                    <div class="slds-clearfix">
+                        <div class="slds-page-header" role="banner">
+                            <div class="slds-float_left" style="display:inline-block;">   
+                           		<p class="slds-page-header__title">Page {!v.pageNumber} | Showing records from {! ((v.pageNumber-1)*v.pageSize+1)+' to '+(v.isLastPage == false ? ((v.pageNumber)*v.pageSize) : v.dataSize)} out of {!v.dataSize}</p>
+                            </div>
+                            <div style="display:inline-block;margin:0 10%;">
+                                <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
+                                                  onclick="{!c.prevPageRecord}" disabled="{! v.pageNumber == 1}"/>
+                                
+                                <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
+                                                  disabled="{! v.isLastPage}" onclick="{!c.nextPageRecord}"/>
+                            </div>                            
+                            <div class="slds-float_right" style="display:inline-block;">      
+                                <lightning:button variant="brand" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.PreviousStep2 }" /> 
+                                <aura:if isTrue="{!greaterthan(v.sfId,0)}">
+                                    <lightning:button variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>            
+                </div>
+            </lightning:card>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!v.currentStep == 'finished'}">
+        <lightning:card>
+            <div class="slds-text-heading_large slds-align_absolute-center">
+                Records updated succesfully<br/><br/>
+            </div>
+            <div class="slds-text-heading_small slds-align_absolute-center">
+                We have sent you an e-mail on &nbsp; <a> {!v.UserEmail} </a> &nbsp; regarding the same.
+                You can download your Success and Error files from your e-mail. 
+            </div><br/>
+            <div class="slds-text-heading_small slds-align_absolute-center">
+                Also, you can find them inside &nbsp;<b>Files / Libraries / Mass Update.</b>
+            </div>
+        </lightning:card>
+    </aura:if>
+
+
+
+    
+</aura:component>

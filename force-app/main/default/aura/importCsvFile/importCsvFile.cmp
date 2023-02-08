@@ -1,0 +1,39 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute name="showcard" type="boolean" default="false"/>
+    <aura:attribute name="tabledata" type="object[]" />
+    <aura:attribute name="header" type="object[]" />
+    <aura:attribute name="allDataList" type="object[]" />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    <aura:attribute name="progress" type="Integer" default="0"/>
+    <aura:attribute name="isProgressing" type="Boolean" default="false"/>
+
+    <aura:registerEvent name="disableNextButton" type="c:disableButtonEvent" />
+    
+    <div>
+        <lightning:input aura:id="file" 
+                         onchange="{!c.showcsvdata}" 
+                         type="file" 
+                         name="file"
+                         accept=".csv"
+                         label="Please upload file"
+                         multiple="false"/>
+
+
+        <!-- <lightning:fileUpload aura:id = "file"
+                        onuploadfinished="{!c.showcsvdata}"
+                        name = "file"
+                        accept = ".csv"
+                        label = "Please upload file"
+                        multiple = "false" />  -->
+        <br/>
+        <div>
+            <div class="slds-grid slds-grid_align-spread slds-p-bottom_x-small" id="progress-bar-label-id-6">
+                <span>{!v.fileName}</span>
+                <span aria-hidden="true">
+                    <strong>{!v.progress}% Complete</strong>
+                </span>
+            </div>
+        <lightning:progressBar class="progressBar" value="{!v.progress}"/>
+         </div>
+    </div>    
+</aura:component>
