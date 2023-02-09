@@ -474,7 +474,7 @@
         var selectedFieldsListArray = [];
         console.log('selectedFieldsListArray:::::' + selectedFieldsListArray);
         var action = component.get("c.setQuery");
-        console.log('action::::' + action);
+        console.log('action::::' + JSON.stringify(action));
         var selectObjectName = component.get("v.selectedObject");
         console.log('selectobjectName:::' + selectObjectName);
         var headerData = component.get('v.header');
@@ -482,9 +482,9 @@
         var tableData = component.get('v.tabledata');
         console.log('tabledata::::::' + tableData);
         var tablePushDataList = component.get('v.tableListData');
-        console.log('tablePushDataList:::::::' + tablePushDataList);
+        console.log('tablePushDataList:::::::' + JSON.stringify(tablePushDataList));
         var sfPushData = component.get('v.FieldToUpdateList');
-        console.log('sfPushData:::::::' + sfPushData);
+        console.log('sfPushData:::::::' + JSON.stringify(sfPushData));
         var pageNumber = component.get('v.pageNumber');
         console.log('pageNumber:::::::' + pageNumber);
         var pageSize = component.get('v.pageSize');
