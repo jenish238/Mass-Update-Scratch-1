@@ -150,16 +150,25 @@
 
         console.log('next Button called');
         var validateSelect;
+        console.log('value of second Button for the:::::' + component.find("selectDropValues"));
         if (component.find("selectDropValues") != undefined) {
             validateSelect = component.find("selectDropValues").reduce(function (validSoFar, inputCmp) {
                 inputCmp.showHelpMessageIfInvalid();
                 return validSoFar && inputCmp.get('v.validity').valid;
             }, true);
         }
+        console.log('validateSelect::::' + validateSelect);
 
         var tablePushDataList = component.get('v.tableListData');
+        // ----------------------------------------jenish gangani 9/2
+        console.log('tablePushDataList:::' + JSON.stringify(tablePushDataList));
+        console.log('tablePushDataList length:::' + (tablePushDataList.length));
         var sfPushData = component.get('v.FieldToUpdateList');
-        // ------------------------------jenish gangani
+        console.log('sfPushData:::' + JSON.stringify(sfPushData));
+        console.log('sfPushData length:::' + (sfPushData.length));
+        // ----------------------------------------jenish gangani 9/2
+
+        // ------------------------------jenish gangani 7/2
         var toggleIndicatorCurrent = component.find("step2Indicator");
         $A.util.removeClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-current');
         $A.util.addClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-complete');
@@ -169,7 +178,7 @@
         var toggleIndicatorNext = component.find("step3Indicator");
         $A.util.removeClass(toggleIndicatorNext, 'slds-tabs--path__item slds-is-incomplete');
         $A.util.addClass(toggleIndicatorNext, 'slds-tabs--path__item slds-is-current');
-        // ------------------------------jenish gangani
+        // ------------------------------jenish gangani 7/2
 
 
         if (tablePushDataList.length < 1 && sfPushData.length < 1) {
@@ -182,6 +191,7 @@
             helper.showToast(component, "Error", "Error!", "Please Select All Fields");
         } else if (validateSelect) {
             var selectedStep = event.getSource().get("v.value");
+            console.log('selecteStep::::' + selectedStep);
 
             var nextStep = selectedStep == 'Step2' ? 'Step3' : 'finished';
 

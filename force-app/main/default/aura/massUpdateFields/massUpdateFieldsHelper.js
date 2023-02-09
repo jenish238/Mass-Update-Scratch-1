@@ -472,21 +472,32 @@
         console.log('next write query called====');
         component.set("v.IsSpinner", true);
         var selectedFieldsListArray = [];
+        console.log('selectedFieldsListArray:::::' + selectedFieldsListArray);
         var action = component.get("c.setQuery");
+        console.log('action::::' + action);
         var selectObjectName = component.get("v.selectedObject");
+        console.log('selectobjectName:::' + selectObjectName);
         var headerData = component.get('v.header');
+        console.log('headerData::::::' + headerData);
         var tableData = component.get('v.tabledata');
+        console.log('tabledata::::::' + tableData);
         var tablePushDataList = component.get('v.tableListData');
+        console.log('tablePushDataList:::::::' + tablePushDataList);
         var sfPushData = component.get('v.FieldToUpdateList');
+        console.log('sfPushData:::::::' + sfPushData);
         var pageNumber = component.get('v.pageNumber');
+        console.log('pageNumber:::::::' + pageNumber);
         var pageSize = component.get('v.pageSize');
+        console.log('pageSize:::::::' + pageSize);
 
         var checkedBox = component.find('checkboxfield');
+        console.log('checkBox::::::' + checkedBox);
         for (var i = 0; i < checkedBox.length; i++) {
             if (checkedBox[i].get("v.checked") == true && checkedBox[i].get("v.name") != null) {
                 selectedFieldsListArray.push(checkedBox[i].get("v.name"));
             }
         }
+        console.log('selectedFieldsListArray:::::::' + selectedFieldsListArray);
 
         var tableDataString = JSON.stringify(tableData);
         var tablePushDataListJson = JSON.stringify(tablePushDataList);
