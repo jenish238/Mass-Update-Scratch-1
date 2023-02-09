@@ -616,7 +616,6 @@
         console.log('pageNumber:::::::' + pageNumber);
         var pageSize = component.get('v.pageSize');
         console.log('pageSize:::::::' + pageSize);
-
-
     }
+
 })
