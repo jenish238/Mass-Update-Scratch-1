@@ -153,6 +153,9 @@
         console.log('value of second Button for the:::::' + component.find("selectDropValues"));
         if (component.find("selectDropValues") != undefined) {
             validateSelect = component.find("selectDropValues").reduce(function (validSoFar, inputCmp) {
+                console.log('validSsofar -- > ', validSoFar);
+                console.log('inputCmp -- > ', { inputCmp });
+
                 inputCmp.showHelpMessageIfInvalid();
                 return validSoFar && inputCmp.get('v.validity').valid;
             }, true);
@@ -194,10 +197,20 @@
             console.log('selecteStep::::' + selectedStep);
 
             var nextStep = selectedStep == 'Step2' ? 'Step3' : 'finished';
+            var operation = component.get('v.operation');
+            console.log('operation value::::' + operation);
 
             if (nextStep == 'finished') {
                 component.set("v.finished", nextStep);
-            } else {
+            }
+            // ---------------- jenish gangani 9/2
+            else if (operation == 'insert') {
+                helper.insertRecord(component, event, helper);
+                component.set("v.currentStep", nextStep);
+            }
+            // ---------------- jenish gangani 9/2
+
+            else {
                 helper.nextWriteQuery(component, event, helper);
                 component.set("v.currentStep", nextStep);
             }

@@ -491,6 +491,7 @@
         console.log('pageSize:::::::' + pageSize);
 
         var checkedBox = component.find('checkboxfield');
+
         console.log('checkBox::::::' + checkedBox);
         for (var i = 0; i < checkedBox.length; i++) {
             if (checkedBox[i].get("v.checked") == true && checkedBox[i].get("v.name") != null) {
@@ -514,10 +515,12 @@
 
         action.setCallback(this, function (response) {
             var resultFull = response.getState();
+            console.log('resultFulll::::::' + resultFull);
 
             if (resultFull === 'SUCCESS' || resultFull === 'DRAFT') {
                 var res = response.getReturnValue();
                 var result = res[0];
+                console.log('result::::::' + JSON.stringify(result));
                 helper.getSobjectList(component, event, helper, result['theMap'], result['theQuery'], selectObjectName, tablePushDataListJson, headerData, sfPushDataListJson, selectedFieldsListArray);
 
             } else {
@@ -590,5 +593,30 @@
             }
         }
         component.set('v.TableLightningData', tempData);
+    },
+    // Record insert Method 
+    insertRecord: function (component, event, helper) {
+        console.log('insertRecord called====');
+        component.set("v.IsSpinner", true);
+        var selectedFieldsListArray = [];
+        console.log('selectedFieldsListArray:::::' + selectedFieldsListArray);
+        var action = component.get("c.setQuery");
+        console.log('action::::' + action);
+        var selectObjectName = component.get("v.selectedObject");
+        console.log('selectobjectName:::' + selectObjectName);
+        var headerData = component.get('v.header');
+        console.log('headerData::::::' + headerData);
+        var tableData = component.get('v.tabledata');
+        console.log('tabledata::::::' + tableData);
+        var tablePushDataList = component.get('v.tableListData');
+        console.log('tablePushDataList:::::::' + tablePushDataList);
+        var sfPushData = component.get('v.FieldToUpdateList');
+        console.log('sfPushData:::::::' + sfPushData);
+        var pageNumber = component.get('v.pageNumber');
+        console.log('pageNumber:::::::' + pageNumber);
+        var pageSize = component.get('v.pageSize');
+        console.log('pageSize:::::::' + pageSize);
+
+
     }
 })
