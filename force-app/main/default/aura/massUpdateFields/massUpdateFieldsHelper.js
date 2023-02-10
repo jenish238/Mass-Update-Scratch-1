@@ -333,6 +333,7 @@
             var result = response.getState();
             if (result == 'SUCCESS') {
                 var res = response.getReturnValue();
+                console.log('res::::'+JSON.stringify(res));
                 component.set("v.updateFieldList", res);
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
@@ -501,8 +502,11 @@
         console.log('selectedFieldsListArray:::::::' + selectedFieldsListArray);
 
         var tableDataString = JSON.stringify(tableData);
+        console.log('tableDataString:::'+ tableDataString);
         var tablePushDataListJson = JSON.stringify(tablePushDataList);
+        console.log('tablePushDataListJson:::::'+ tablePushDataListJson);
         var sfPushDataListJson = JSON.stringify(sfPushData);
+        console.log('sfPushDataListJson:::::'+sfPushDataListJson);
 
         action.setParams({
             'selectedListOfFields': selectedFieldsListArray,
@@ -510,7 +514,7 @@
             'headerData': headerData,
             'tableData': tableDataString,
             'tablePushDataListJson': tablePushDataListJson,
-            'FieldToUpdateList': sfPushDataListJson,
+            'FieldToUpdateList': sfPushDataListJson, 
         });
 
         action.setCallback(this, function (response) {
@@ -600,7 +604,7 @@
         component.set("v.IsSpinner", true);
         var selectedFieldsListArray = [];
         console.log('selectedFieldsListArray:::::' + selectedFieldsListArray);
-        var action = component.get("c.setQuery");
+        var action = component.get("c.insertRecode");
         console.log('action::::' + action);
         var selectObjectName = component.get("v.selectedObject");
         console.log('selectobjectName:::' + selectObjectName);
@@ -616,6 +620,34 @@
         console.log('pageNumber:::::::' + pageNumber);
         var pageSize = component.get('v.pageSize');
         console.log('pageSize:::::::' + pageSize);
+        var tableDataString = JSON.stringify(tableData);
+        var tablePushDataListJson = JSON.stringify(tablePushDataList);
+        var sfPushDataListJson = JSON.stringify(sfPushData);
+
+        action.setParams({
+            'selectedListOfFields': selectedFieldsListArray,
+            'selectObjectName': selectObjectName,
+            'headerData': headerData,
+            'tableData': tableDataString,
+            'tablePushDataListJson': tablePushDataListJson,
+            'FieldToUpdateList': sfPushDataListJson,
+        });
+
+        action.setCallback(this, function (response) {
+            var resultFull = response.getState();
+            console.log('resultFulll::::::' + resultFull);
+
+            if (resultFull === 'SUCCESS' || resultFull === 'DRAFT') {
+                var res = response.getReturnValue();
+                var result = res[0];
+                console.log('result for the insertRecord ::::::' + JSON.stringify(result));
+
+            } else {
+                component.set("v.IsSpinner", false);
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong nextWritequery");
+            }
+        });
+        $A.enqueueAction(action);
     }
 
 })
