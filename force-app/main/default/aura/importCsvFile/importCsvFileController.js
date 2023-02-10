@@ -26,6 +26,7 @@
                 reader.onload = function (evt) {
                     var csv = evt.target.result;
                     console.log("csv:::" + csv);
+                    console.log('csv length===', csv.length);
                     if (csv.length > 4000000) {
                         helper.showToast(
                             "Info",

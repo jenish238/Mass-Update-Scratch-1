@@ -128,7 +128,7 @@
             component.set("v.IsSpinner", true);
             var selectedStep = event.getSource().get("v.value");
             console.log('selectedStep' + selectedStep);
-            // ----------jenish gangani
+            // ----------jenish gangani progress bar
             var toggleIndicatorCurrent = component.find("step1Indicator");
             $A.util.removeClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-current');
             $A.util.addClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-complete');
@@ -333,7 +333,7 @@
             var result = response.getState();
             if (result == 'SUCCESS') {
                 var res = response.getReturnValue();
-                console.log('res::::'+JSON.stringify(res));
+                console.log('res::::' + JSON.stringify(res));
                 component.set("v.updateFieldList", res);
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
@@ -382,6 +382,7 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
+                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SFId")) {
                                 sfid++;
@@ -393,6 +394,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
+                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
                         var csvCount = 0, sfCount = 0;
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SF")) {
@@ -407,6 +409,7 @@
                                 }
                             }
                         }
+                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
                                 csvCount++;
@@ -450,7 +453,18 @@
                 } else {
                     component.set('v.isLastPage', false);
                 }
+
                 var totalSize = ListData.length / pageSize;
+
+                console.log('TempListData==' + JSON.stringify(TempListData));
+                console.log('totalSize===' + totalSize);
+                console.log('sfid===' + sfid);
+                console.log('fieldHeaderListing===' + JSON.stringify(fieldHeaderListing));
+                console.log('ResultOfAllData===' + JSON.stringify(ResultOfAllData));
+                console.log('dataSize===' + ListData.length);
+                console.log('TableLightningData===' + JSON.stringify(TempListData));
+
+
                 component.set("v.totalPage", totalSize);
                 component.set("v.sfId", sfid);
                 component.set("v.columns", fieldHeaderListing);
@@ -502,19 +516,19 @@
         console.log('selectedFieldsListArray:::::::' + selectedFieldsListArray);
 
         var tableDataString = JSON.stringify(tableData);
-        console.log('tableDataString:::'+ tableDataString);
+        console.log('tableDataString:::' + tableDataString);
         var tablePushDataListJson = JSON.stringify(tablePushDataList);
-        console.log('tablePushDataListJson:::::'+ tablePushDataListJson);
+        console.log('tablePushDataListJson:::::' + tablePushDataListJson);
         var sfPushDataListJson = JSON.stringify(sfPushData);
-        console.log('sfPushDataListJson:::::'+sfPushDataListJson);
+        console.log('sfPushDataListJson:::::' + sfPushDataListJson);
 
         action.setParams({
-            'selectedListOfFields': selectedFieldsListArray,
+            'selectedListOfFields': selectedFieldsListArray, //not
             'selectObjectName': selectObjectName,
             'headerData': headerData,
             'tableData': tableDataString,
             'tablePushDataListJson': tablePushDataListJson,
-            'FieldToUpdateList': sfPushDataListJson, 
+            'FieldToUpdateList': sfPushDataListJson,
         });
 
         action.setCallback(this, function (response) {
@@ -602,8 +616,6 @@
     insertRecord: function (component, event, helper) {
         console.log('insertRecord called====');
         component.set("v.IsSpinner", true);
-        var selectedFieldsListArray = [];
-        console.log('selectedFieldsListArray:::::' + selectedFieldsListArray);
         var action = component.get("c.insertRecode");
         console.log('action::::' + action);
         var selectObjectName = component.get("v.selectedObject");
@@ -612,24 +624,21 @@
         console.log('headerData::::::' + headerData);
         var tableData = component.get('v.tabledata');
         console.log('tabledata::::::' + tableData);
-        var tablePushDataList = component.get('v.tableListData');
-        console.log('tablePushDataList:::::::' + tablePushDataList);
         var sfPushData = component.get('v.FieldToUpdateList');
-        console.log('sfPushData:::::::' + sfPushData);
+        console.log('sfPushData:::::::' + JSON.stringify(sfPushData));
         var pageNumber = component.get('v.pageNumber');
         console.log('pageNumber:::::::' + pageNumber);
         var pageSize = component.get('v.pageSize');
         console.log('pageSize:::::::' + pageSize);
         var tableDataString = JSON.stringify(tableData);
-        var tablePushDataListJson = JSON.stringify(tablePushDataList);
+        console.log('tableDataString:::::' + tableDataString);
         var sfPushDataListJson = JSON.stringify(sfPushData);
+        console.log('sfPushDataListJson:::::::' + sfPushDataListJson);
 
         action.setParams({
-            'selectedListOfFields': selectedFieldsListArray,
             'selectObjectName': selectObjectName,
             'headerData': headerData,
             'tableData': tableDataString,
-            'tablePushDataListJson': tablePushDataListJson,
             'FieldToUpdateList': sfPushDataListJson,
         });
 
@@ -644,10 +653,17 @@
 
             } else {
                 component.set("v.IsSpinner", false);
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong nextWritequery");
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong insert Method");
             }
         });
         $A.enqueueAction(action);
+    },
+    setRecord: function (component, event, helper) {
+
+
+
+
     }
+
 
 })

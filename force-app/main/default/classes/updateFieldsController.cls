@@ -91,7 +91,7 @@ public with sharing class updateFieldsController {
         System.debug('headerData======'+headerData);
         System.debug('tableData======'+tableData);
         System.debug('tablePushDataListJson======'+tablePushDataListJson);
-        System.debug('FieldToUpdateList====='+FieldToUpdateList);
+        System.debug('FieldToUpdateList====='+FieldToUpdateList); 
 
 
         Map<String, Integer> IndexFieldCSV = new Map<String, Integer>();
@@ -101,6 +101,8 @@ public with sharing class updateFieldsController {
             IndexFieldCSV.put(s, x);
             x++;
         }
+
+        System.debug('IndexFieldCSV::::::'+ IndexFieldCSV);
         
         List<String>                    dataList                         = (List<String>)                   System.JSON.deserialize(tableData               , List<String>.class);
         List<uploadCsvFileJsonWrapper>  tablePushDataListJsonDeserialize = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(tablePushDataListJson   , List<uploadCsvFileJsonWrapper>.class);
@@ -129,7 +131,9 @@ public with sharing class updateFieldsController {
         Map<String,String> strValue = new Map<String,String>(); 
         Integer k = 0;
         SObjectType r = ((SObject)(Type.forName('Schema.'+selectObjectName).newInstance())).getSObjectType();
+        System.debug('r:::::'+ r);
    		DescribeSObjectResult d = r.getDescribe();
+        System.debug('d:::::::'+d);
         //Getting CSV data and storing it into *csvAllDataMap* map
         System.debug('dataList:::::'+ dataList);
         for(String data : dataList){
@@ -352,7 +356,7 @@ public with sharing class updateFieldsController {
             System.debug('Error ' + e.getMessage() + e.getLineNumber());
         }
 
-        // System.debug('csvData')
+        System.debug('csvData=='+csvData);
         return csvData;
     }
     
@@ -482,96 +486,94 @@ public class pairWrapper1{
 
     // ---------jenish gangani 9/2/23
     @AuraEnabled
-    public static Map<String,Map<String,String>> insertRecode(List<String> selectedListOfFields,String selectObjectName,List<String> headerData,String tableData,String tablePushDataListJson, String FieldToUpdateList){
+    public static void insertRecode(String selectObjectName,List<String> headerData,String tableData, String FieldToUpdateList){
         try {
-            System.debug('Set insertRecode query called==============');
-        System.debug('selectedListOfFields===='+selectedListOfFields);
+        System.debug('Set insertRecode query called==============');
         System.debug('selectObjectName======'+selectObjectName);
         System.debug('headerData======'+headerData);
         System.debug('tableData======'+tableData);
-        System.debug('tablePushDataListJson======'+tablePushDataListJson);
         System.debug('FieldToUpdateList====='+FieldToUpdateList);
 
 
-        Map<String, Integer> IndexFieldCSV = new Map<String, Integer>();
+        // Map<String, Integer> IndexFieldCSV = new Map<String, Integer>();
         
-        Integer x = 0;
-        for(String s : headerData){
-            IndexFieldCSV.put(s, x);
-            x++;
-        }
-        
-        List<String>                    dataList                         = (List<String>)                   System.JSON.deserialize(tableData               , List<String>.class);
-        List<uploadCsvFileJsonWrapper>  tablePushDataListJsonDeserialize = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(tablePushDataListJson   , List<uploadCsvFileJsonWrapper>.class);
-        List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr             = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(FieldToUpdateList       , List<uploadCsvFileJsonWrapper>.class);
-        
-        Map<String,Set<String>>         keyValueMap     = new Map<String,Set<String>>();
-        Map<String,Map<String,String>>  csvAllDataMap   = new Map<String,Map<String,String>>();
-        
-        for(uploadCsvFileJsonWrapper ucv:tablePushDataListJsonDeserialize){        
-            keyValueMap.put(ucv.SObjectField, new Set<String>()); 
-        }
-        // if(!selectedListOfFields.contains('Id')){
-        //     selectedListOfFields.add('Id');
+        // Integer x = 0;
+        // for(String s : headerData){
+        //     IndexFieldCSV.put(s, x);
+        //     x++;
         // }
-        System.debug('selected field==='+selectedListOfFields);
-        List<String> mnList = new List<String>();
-        Integer j = 0;
         
-        String strKey;
-        Map<String,String> strValue = new Map<String,String>(); 
-        Integer k = 0;
-        SObjectType r = ((SObject)(Type.forName('Schema.'+selectObjectName).newInstance())).getSObjectType();
-   		DescribeSObjectResult d = r.getDescribe();
-        //Getting CSV data and storing it into *csvAllDataMap* map
-        for(String data : dataList){
-            strKey = ''; 
-            strValue = new Map<String, String>();
-            k = 0;
-            data=data.trim(); 
-            if(data != ''){  
-                if(data.endsWith(',')) data += ' ';
+        // List<String>                    dataList                         = (List<String>)                   System.JSON.deserialize(tableData               , List<String>.class);
+        // List<uploadCsvFileJsonWrapper>  tablePushDataListJsonDeserialize = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(tablePushDataListJson   , List<uploadCsvFileJsonWrapper>.class);
+        // List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr             = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(FieldToUpdateList       , List<uploadCsvFileJsonWrapper>.class);
+        
+        // Map<String,Set<String>>         keyValueMap     = new Map<String,Set<String>>();
+        // Map<String,Map<String,String>>  csvAllDataMap   = new Map<String,Map<String,String>>();
+        
+        // for(uploadCsvFileJsonWrapper ucv:tablePushDataListJsonDeserialize){        
+        //     keyValueMap.put(ucv.SObjectField, new Set<String>()); 
+        // }
+        // // if(!selectedListOfFields.contains('Id')){
+        // //     selectedListOfFields.add('Id');
+        // // }
+        // System.debug('selected field==='+selectedListOfFields);
+        // List<String> mnList = new List<String>();
+        // Integer j = 0;
+        
+        // String strKey;
+        // Map<String,String> strValue = new Map<String,String>(); 
+        // Integer k = 0;
+        // SObjectType r = ((SObject)(Type.forName('Schema.'+selectObjectName).newInstance())).getSObjectType();
+   		// DescribeSObjectResult d = r.getDescribe();
+        // //Getting CSV data and storing it into *csvAllDataMap* map
+        // for(String data : dataList){
+        //     strKey = ''; 
+        //     strValue = new Map<String, String>();
+        //     k = 0;
+        //     data=data.trim(); 
+        //     if(data != ''){  
+        //         if(data.endsWith(',')) data += ' ';
                 
-                List<String> StringData = data.split(',(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)');
-                System.debug(StringData);
-                for(uploadCsvFileJsonWrapper ucv : tablePushDataListJsonDeserialize){
-                    if(IndexFieldCSV.get(ucv.csvfield)!=null){
-                        if(keyValueMap.containskey(ucv.SObjectField)){
-                            if(d.fields.getMap().get(ucv.SObjectField).getDescribe().isUpdateable() && d.fields.getMap().get(ucv.SObjectField).getDescribe().isAccessible()){
-                                String fieldType = String.valueOf(d.fields.getMap().get(ucv.SObjectField).getDescribe().getType());
+        //         List<String> StringData = data.split(',(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)');
+        //         System.debug(StringData);
+        //         for(uploadCsvFileJsonWrapper ucv : tablePushDataListJsonDeserialize){
+        //             if(IndexFieldCSV.get(ucv.csvfield)!=null){
+        //                 if(keyValueMap.containskey(ucv.SObjectField)){
+        //                     if(d.fields.getMap().get(ucv.SObjectField).getDescribe().isUpdateable() && d.fields.getMap().get(ucv.SObjectField).getDescribe().isAccessible()){
+        //                         String fieldType = String.valueOf(d.fields.getMap().get(ucv.SObjectField).getDescribe().getType());
                             
-                                if(fieldType == 'DATE'){
-                                    strKey += String.valueOf(date.parse(StringData[IndexFieldCSV.get(ucv.csvfield)])).removeEnd(' 00:00:00').trim()+'^';
-                                }else{
-                                    if(StringData[IndexFieldCSV.get(ucv.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(ucv.csvfield)].trim().endsWith('"')){
-                                        System.debug(StringData[IndexFieldCSV.get(ucv.csvfield)].trim().removeStart('"').removeEnd('"'));
-                                    	strKey += StringData[IndexFieldCSV.get(ucv.csvfield)].trim().removeStart('"').removeEnd('"')+'^';                                            
-                                    }else{
-                                      	strKey += StringData[IndexFieldCSV.get(ucv.csvfield)].trim()+'^';     
-                                    }
-                                }
-                                keyValueMap.get(ucv.SObjectField).add(StringData[IndexFieldCSV.get(ucv.csvfield)].trim());
-                            }
-                        }
-                    }
-                }
-                System.debug('keyValueMap::::::'+ keyValueMap);
-                for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
-                    if(IndexFieldCSV.get(field.csvfield)!=null){
-                        if(StringData[IndexFieldCSV.get(field.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(field.csvfield)].trim().endsWith('"')){
-                        	strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim().removeStart('"').removeEnd('"'));    
-                        }else{
-                            strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim());    
-                        }                       
-                    }
-                }
-                csvAllDataMap.put(strKey.removeEnd('^'), strValue);
-            }
-            System.debug('csvAllDataMap::::::'+csvAllDataMap);
-        }return csvAllDataMap;
+        //                         if(fieldType == 'DATE'){
+        //                             strKey += String.valueOf(date.parse(StringData[IndexFieldCSV.get(ucv.csvfield)])).removeEnd(' 00:00:00').trim()+'^';
+        //                         }else{
+        //                             if(StringData[IndexFieldCSV.get(ucv.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(ucv.csvfield)].trim().endsWith('"')){
+        //                                 System.debug(StringData[IndexFieldCSV.get(ucv.csvfield)].trim().removeStart('"').removeEnd('"'));
+        //                             	strKey += StringData[IndexFieldCSV.get(ucv.csvfield)].trim().removeStart('"').removeEnd('"')+'^';                                            
+        //                             }else{
+        //                               	strKey += StringData[IndexFieldCSV.get(ucv.csvfield)].trim()+'^';     
+        //                             }
+        //                         }
+        //                         keyValueMap.get(ucv.SObjectField).add(StringData[IndexFieldCSV.get(ucv.csvfield)].trim());
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         System.debug('keyValueMap::::::'+ keyValueMap);
+        //         for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
+        //             if(IndexFieldCSV.get(field.csvfield)!=null){
+        //                 if(StringData[IndexFieldCSV.get(field.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(field.csvfield)].trim().endsWith('"')){
+        //                 	strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim().removeStart('"').removeEnd('"'));    
+        //                 }else{
+        //                     strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim());    
+        //                 }                       
+        //             }
+        //         }
+        //         csvAllDataMap.put(strKey.removeEnd('^'), strValue);
+        //     }
+        //     System.debug('csvAllDataMap::::::'+csvAllDataMap);
+        // }return csvAllDataMap;
             
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            // throw new AuraHandledException(e.getMessage());
         }
     }
     // ---------jenish gangani 9/2/23
