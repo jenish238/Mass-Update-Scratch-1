@@ -171,7 +171,7 @@
         console.log('sfPushData length:::' + (sfPushData.length));
         // ----------------------------------------jenish gangani 9/2
 
-        // ------------------------------jenish gangani 7/2
+        // ------------------------------jenish gangani 7/2  to change the progressbar movement
         var toggleIndicatorCurrent = component.find("step2Indicator");
         $A.util.removeClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-current');
         $A.util.addClass(toggleIndicatorCurrent, 'slds-tabs--path__item slds-is-complete');
