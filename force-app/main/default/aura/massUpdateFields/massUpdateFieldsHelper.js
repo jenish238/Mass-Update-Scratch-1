@@ -338,10 +338,36 @@
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
             }
-            component.set("v.IsSpinner", false);
+            component.set("v.IsSpinner", false); 
         });
         $A.enqueueAction(action);
     },
+
+    // --------jenish gangani 11/02 for insert data 
+    setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+
+        var action = component.get('c.setSobjectListForInsert');
+
+        action.setParams({
+            'allData': ResultOfAllData,
+            'FieldToUpdateList': sfPushDataListJson,
+            'selectObjectName': selectObjectName,
+        });
+        action.setCallback(this, function (response) {
+            var result = response.getState();
+            if (result == 'SUCCESS') {
+                var res = response.getReturnValue();
+                console.log('resfor insert::::' + JSON.stringify(res));
+                component.set("v.updateFieldList", res);
+            } else {
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
+            }
+            component.set("v.IsSpinner", false); 
+        });
+        $A.enqueueAction(action);
+    },
+    // --------jenish gangani 11/02 for insert data 
+
 
     getSobjectList: function (component, event, helper, resultdata, query, selectObjectName, tablePushDataListJson, headerData, sfPushDataListJson, selectedListOfFields) {
 
@@ -575,6 +601,31 @@
         });
         $A.enqueueAction(action);
     },
+    saveRecordsToSFForInsert: function (component, event, helper) {
+        component.set("v.IsSpinner", true);
+        var action = component.get('c.insertRecode');
+        var data = component.get("v.updateFieldList");
+        var sfPushData = component.get('v.FieldToUpdateList');
+        var selectObjectName = component.get("v.selectedObject");
+        var sfPushDataListJson = JSON.stringify(sfPushData);
+
+        action.setParams({
+            'data': data,
+            'FieldToUpdateList': sfPushDataListJson,
+            'selectObjectName': selectObjectName
+        });
+        action.setCallback(this, function (response) {
+            var status = response.getState();
+            if (status == 'SUCCESS') {
+
+            } else {
+                component.set("v.IsSpinner", false);
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong saveRecordData");
+            }
+            component.set("v.IsSpinner", false);
+        });
+        $A.enqueueAction(action);
+    },
     showToast: function (component, type, title, message) {
         try {
             var toastEvent = $A.get("e.force:showToast");
@@ -759,6 +810,8 @@
                 component.set('v.TableLightningData', TempListData);
 
                 component.set("v.IsSpinner", false);
+                helper.setSobjectforInsertRecode(component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName);
+
 
             } else {
                 component.set("v.IsSpinner", false);

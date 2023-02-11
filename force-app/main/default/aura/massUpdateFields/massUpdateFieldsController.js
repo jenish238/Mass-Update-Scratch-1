@@ -227,6 +227,16 @@
             component.set("v.finished", true);
         }
     },
+    saveRecordsToSFForInsert: function (component, event, helper) {
+        var selectedStep = event.getSource().get("v.value");
+        var nextStep = selectedStep == 'Step3' ? 'finished' : 'finished';
+
+        if (nextStep == 'finished') {
+            helper.saveRecordsToSFForInsert(component, event, helper);
+            component.set("v.currentStep", nextStep);
+            component.set("v.finished", true);
+        }
+    },
 
     nextPageRecord: function (component, event, helper) {
         var pageNumber = component.get('v.pageNumber');

@@ -508,6 +508,9 @@
                                 <aura:if isTrue="{!greaterthan(v.sfId,0)}">
                                     <lightning:button variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>
                                 </aura:if>
+                                <aura:if isTrue="{!v.operation=='insert'}">
+                                    <lightning:button variant="brand" value="{!v.currentStep}" label="insert" title="insert" onclick="{! c.saveRecordsToSFForInsert }"/>
+                                </aura:if>
                             </div>
                         </div>
                     </div>            
