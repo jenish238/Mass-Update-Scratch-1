@@ -25,6 +25,7 @@
                 reader.readAsText(file, "UTF-8");
                 reader.onload = function (evt) {
                     var csv = evt.target.result;
+                    console.log('typeof csvf::'+typeof(csv));
                     console.log("csv:::" + csv);
                     console.log('csv length===', csv.length);
                     if (csv.length > 4000000) {

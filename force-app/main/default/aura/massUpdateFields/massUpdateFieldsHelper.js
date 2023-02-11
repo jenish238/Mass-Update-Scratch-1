@@ -382,7 +382,7 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SFId")) {
                                 sfid++;
@@ -394,7 +394,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
                         var csvCount = 0, sfCount = 0;
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SF")) {
@@ -409,7 +409,7 @@
                                 }
                             }
                         }
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
                                 csvCount++;
@@ -421,6 +421,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
+                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
                     }
                 }
                 var ListData = [], TempListData = [], srno = 1;
@@ -647,11 +648,118 @@
             console.log('resultFulll::::::' + resultFull);
 
             if (resultFull === 'SUCCESS' || resultFull === 'DRAFT') {
-                var res = response.getReturnValue();
-                console.log('result of the res::::' + JSON.stringify(res));
-                // var result = res[0];
-                // console.log('result for the insertRecord ::::::' + JSON.stringify(result));
+                var ResultOfAllData = response.getReturnValue();
+                console.log('result of the res::::' + JSON.stringify(ResultOfAllData));
+
+                for (var key in ResultOfAllData) {
+
+                    console.log('key:::'+ key);
+                    console.log('ResultOfAllData:::'+ ResultOfAllData);
+                    var i = 0;
+                    var fieldHeaderListing = []
+
+
+                    if (i < Object.keys(ResultOfAllData[key]).length) {
+                        fieldHeaderListing = [];
+                        i = Object.keys(ResultOfAllData[key]).length;
+
+                        var sfid = 0;
+                        var srno = {};
+                        srno['label'] = "Sr No";
+                        srno['fieldName'] = "SrNo";
+                        srno['type'] = "text";
+                        srno['initialWidth'] = 70;
+                        fieldHeaderListing.push(srno);
+                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("SFId")) {
+                                sfid++;
+                                var data = {};
+                                data['label'] = val.replace('SF', '');
+                                data['fieldName'] = val;
+                                data['type'] = 'url';
+                                data['typeAttributes'] = { label: { fieldName: val }, target: '_blank' };
+                                fieldHeaderListing.push(data);
+                            }
+                        }
+                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
+                        var csvCount = 0, sfCount = 0;
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("SF")) {
+                                if (val !== "SFId") {
+                                    sfCount++;
+                                    var data = {};
+                                    data['label'] = val.replace('SF', '');
+                                    data['fieldName'] = val;
+                                    data['type'] = 'text';
+                                    data['cellAttributes'] = { class: { fieldName: 'sfcols' } };
+                                    fieldHeaderListing.push(data);
+                                }
+                            }
+                        }
+                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("CSV")) {
+                                csvCount++;
+                                var data = {};
+                                data['label'] = val.replace('CSV', '');
+                                data['fieldName'] = val;
+                                data['type'] = 'text';
+                                data['cellAttributes'] = { class: { fieldName: 'csvcols' } };
+                                fieldHeaderListing.push(data);
+                            }
+                        }
+                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
+                    }
+                }
+                var ListData = [], TempListData = [], srno = 1;
+                for (var key in ResultOfAllData) {
+                    var data = {};
+                    data['SrNo'] = srno + '';
+                    for (var val in ResultOfAllData[key]) {
+                        if (val == 'SFId') {
+                            data[val] = '/' + ResultOfAllData[key][val];
+                        } else {
+                            data[val] = ResultOfAllData[key][val];
+                        }
+                        if (val.startsWith('SF')) {
+                            data['sfcols'] = 'sfcol';
+                        } else {
+                            data['csvcols'] = 'csvcol';
+                        }
+                    }
+                    srno++;
+                    ListData.push(data);
+                    if (TempListData.length < pageSize) {
+                        TempListData.push(data);
+                    }
+                }
+                if (ListData.length <= pageSize * (pageNumber)) {
+                    component.set('v.isLastPage', true);
+                } else {
+                    component.set('v.isLastPage', false);
+                }
+
+                var totalSize = ListData.length / pageSize;
+
+                console.log('TempListData==' + JSON.stringify(TempListData));
+                console.log('totalSize===' + totalSize);
+                console.log('sfid===' + sfid);
+                console.log('fieldHeaderListing===' + JSON.stringify(fieldHeaderListing));
+                console.log('ResultOfAllData===' + JSON.stringify(ResultOfAllData));
+                console.log('dataSize===' + ListData.length);
+                console.log('TableLightningData===' + JSON.stringify(TempListData));
+
+
+                component.set("v.totalPage", totalSize);
+                component.set("v.sfId", sfid);
+                component.set("v.columns", fieldHeaderListing);
+                component.set('v.ResultOfAllData', ListData);
+                component.set("v.dataSize", ListData.length);
+                component.set('v.TableLightningData', TempListData);
+
                 component.set("v.IsSpinner", false);
+
             } else {
                 component.set("v.IsSpinner", false);
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong insert Method");
@@ -659,12 +767,6 @@
         });
         $A.enqueueAction(action);
     },
-    setRecord: function (component, event, helper) {
-
-
-
-
-    }
-
+    
 
 })

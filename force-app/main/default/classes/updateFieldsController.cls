@@ -171,11 +171,11 @@ public with sharing class updateFieldsController {
                 for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
                     if(IndexFieldCSV.get(field.csvfield)!=null){
                         if(StringData[IndexFieldCSV.get(field.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(field.csvfield)].trim().endsWith('"')){
-                        	strValue.put( field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim().removeStart('"').removeEnd('"'));  
+                        	strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim().removeStart('"').removeEnd('"'));  
                             // strKey = StringData[IndexFieldCSV.get(field.csvfield)].trim()+'^'; 
                                         // System.debug('176===>'+ strKey);   
                         }else{
-                            strValue.put( field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim());    
+                            strValue.put( 'CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim());    
                             // strKey = StringData[IndexFieldCSV.get(field.csvfield)].trim()+'^'; 
                                         // System.debug('180===>'+ strKey); 
                         }                       
