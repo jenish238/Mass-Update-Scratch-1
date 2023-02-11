@@ -190,7 +190,7 @@
                                         </lightning:select>
                                     <br/>
                              <!-- jenish gangani 8/2/23  -->
-                            <c:importCsvFile  header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
+                            <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
                             <!-- <lightning:fileUpload aura:id = "file"
                                     onuploadfinished="{!c.showcsvdata}"
                                     name = "file"
