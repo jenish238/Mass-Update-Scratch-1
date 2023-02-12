@@ -7,8 +7,12 @@
     <aura:attribute name="progress" type="Integer" default="0"/>
     <aura:attribute name="isProgressing" type="Boolean" default="false"/>
 
-
+   <!--  jenish gangani 9/2/23 event  -->
     <aura:registerEvent name="disableNextButton" type="c:disableButtonEvent" />
+    <aura:registerEvent name="GoogleDriveEvent" type="c:GoogleDriveEvent" />
+    <aura:handler name="GoogleDriveEvent" event="c:GoogleDriveEvent" action="{!c.handleFileSelection}" />
+   <!-- jenish gangani 9/2/23 event  -->
+
     
     <div>
         <lightning:input aura:id="file" 
@@ -19,6 +23,7 @@
                          label="Please upload file"
                          multiple="false"/>
 
+        <lightning:button label="Select a file from Google Drive" onclick="{!c.redirectToDrive}" />
 
         <!-- <lightning:fileUpload aura:id = "file"
                         onuploadfinished="{!c.showcsvdata}"

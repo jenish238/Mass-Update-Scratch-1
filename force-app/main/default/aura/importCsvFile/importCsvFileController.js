@@ -144,7 +144,27 @@
         } else {
             helper.showToast("Info", "Info!", "Please upload only CSV file");
         }
-    }
+    },
+    redirectToDrive: function(component, event, helper) {
+        window.open("https://drive.google.com/drive/my-drive", "_blank");
+        // window.location("","_blank");
+
+        window.addEventListener("message", function(event) {
+            if (event.data && event.data.type === "FILE_SELECTED") {
+              var file = event.data.file;
+              var appEvent = $A.get("e.c:GoogleDriveEvent");
+              appEvent.setParams({ "files": [file] });
+              appEvent.fire();
+            }
+          })
+      },
+      handleFileSelection: function(component, event, helper) {
+        var fileInput = component.find("file");
+        fileInput.set("v.files", event.getParam("files"));
+      }
+      
+
+    
 });
 
 // ({
