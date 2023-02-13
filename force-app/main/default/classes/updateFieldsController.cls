@@ -684,6 +684,10 @@ public with sharing class updateFieldsController {
     // this method will update data using batch class
     @AuraEnabled
     public static void insertCSVtoSF(String data, String FieldToUpdateList, String selectObjectName){
+        System.debug('insertCSVtoSF called==');
+        System.debug('Data=='+data);
+        System.debug('FieldToUpdateList=='+FieldToUpdateList);
+        System.debug('selectObjectName=='+selectObjectName);
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);

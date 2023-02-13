@@ -38,15 +38,21 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
             Map<String, String> errorDetailMap = new Map<String, String>();
             
             for (Integer i=0;i<resultList.size();i++){
+                System.debug('resultList=='+resultList);
                 if(resultList[i].isSuccess()) {
+                    System.debug('success===');
                     successList.add(resultList[i].getId());
                 } 
                 else if(!resultList[i].isSuccess()) {
+                    System.debug('Error===');
                     errorList.add(lstSobject.get(i).Id); 
                     Database.Error errors =  resultList[i].getErrors().get(0);
                     errorDetailMap.put(lstSobject.get(i).Id , errors.getMessage());
                 }
             }
+            
+			System.debug('success Id=='+successList);
+			System.debug('Error Id=='+errorList);          
             
             String querySuccess = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: successList ';
             List<SObject> sList = (database.query(querySuccess));
