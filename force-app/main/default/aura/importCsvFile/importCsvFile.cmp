@@ -11,6 +11,11 @@
     <aura:registerEvent name="disableNextButton" type="c:disableButtonEvent" />
     <aura:registerEvent name="GoogleDriveEvent" type="c:GoogleDriveEvent" />
     <aura:handler name="GoogleDriveEvent" event="c:GoogleDriveEvent" action="{!c.handleFileSelection}" />
+    <!-- <ltng:require scripts="/resource/gapifile/api.js"  afterScriptsLoaded="{!c.loadJQuery}"/> -->
+     <ltng:require 
+    scripts="{!$Resource.gapifile  + '/api.js'}"
+    afterScriptsLoaded="{!c.scriptsLoaded}" />
+
    <!-- jenish gangani 9/2/23 event  -->
 
     

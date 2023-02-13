@@ -193,7 +193,7 @@ public with sharing class updateFieldsController {
         }
         
         // Set<String> listSql = new Set<String>();    
-        String soqlQuer = 'SELECT ';
+        // String soqlQuer = 'SELECT ';
         
         //Mapping of fields which data have to save into which fields
         // if(FieldToUpdateListWpr.size() > 0){
@@ -277,9 +277,9 @@ public with sharing class updateFieldsController {
             }
         }
 
-        List<wrapDataList> listData = new List<wrapDataList>();
-        listData.add(new wrapDataList(soqlQuer, csvAllDataMap));
-        System.debug('ListData====='+listData);
+        // List<wrapDataList> listData = new List<wrapDataList>();
+        // listData.add(new wrapDataList(soqlQuer, csvAllDataMap));
+        // System.debug('ListData====='+listData);
         System.debug('275=====>'+csvAllDataMap);
         return csvAllDataMap;
     }
@@ -328,6 +328,7 @@ public with sharing class updateFieldsController {
         if(!selectedListOfFields.contains('Id')){
             selectedListOfFields.add('Id');
         }
+        System.debug('331======> '+ keyValueMap);
         System.debug('selected field==='+selectedListOfFields);
         List<String> mnList = new List<String>();
         Integer j = 0;
@@ -683,6 +684,10 @@ public with sharing class updateFieldsController {
     // this method will update data using batch class
     @AuraEnabled
     public static void insertCSVtoSF(String data, String FieldToUpdateList, String selectObjectName){
+        System.debug('insertCSVtoSF called==');
+        System.debug('Data=='+data);
+        System.debug('FieldToUpdateList=='+FieldToUpdateList);
+        System.debug('selectObjectName=='+selectObjectName);
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);
@@ -700,9 +705,9 @@ public with sharing class updateFieldsController {
         UpdateSobjectBatchable updateSObject = new UpdateSobjectBatchable(dataList, strcsvfield, selectObjectName, csvField);
         Database.executeBatch(updateSObject);
     }
-    // this method for insert recode using batch class jenish gangani 11/02/23
+    // this method for insert record using batch class jenish gangani 11/02/23
     @AuraEnabled
-    public static void insertRecode(String data, String FieldToUpdateList, String selectObjectName){
+    public static void insertRecord(String data, String FieldToUpdateList, String selectObjectName){
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);

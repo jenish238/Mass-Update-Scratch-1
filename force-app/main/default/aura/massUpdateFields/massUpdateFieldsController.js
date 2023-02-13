@@ -197,8 +197,10 @@
             console.log('selecteStep::::' + selectedStep);
 
             var nextStep = selectedStep == 'Step2' ? 'Step3' : 'finished';
+            // ------------ jenish gangani  get the opration value 
             var operation = component.get('v.operation');
             console.log('operation value::::' + operation);
+            // ------------ jenish gangani  get the opration value 
 
             if (nextStep == 'finished') {
                 component.set("v.finished", nextStep);
