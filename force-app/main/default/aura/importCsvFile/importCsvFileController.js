@@ -25,7 +25,7 @@
                 reader.readAsText(file, "UTF-8");
                 reader.onload = function (evt) {
                     var csv = evt.target.result;
-                    console.log('typeof csvf::'+typeof(csv));
+                    console.log('typeof csvf::' + typeof (csv));
                     console.log("csv:::" + csv);
                     console.log('csv length===', csv.length);
                     if (csv.length > 4000000) {
@@ -145,26 +145,42 @@
             helper.showToast("Info", "Info!", "Please upload only CSV file");
         }
     },
-    redirectToDrive: function(component, event, helper) {
-        window.open("https://drive.google.com/drive/my-drive", "_blank");
+    redirectToDrive: function (component, event, helper) {
+        console.log('redirectToDrive');
+
+        // window.open("https://drive.google.com/drive/my-drive", "_blank");
+        var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+        var windowParams = "width=600,height=400";
+        var windowUrl = "https://www.googleapis.com/auth/drive.file";
+        // var windowUrl = "https://drive.google.com/drive/my-drive";
+
+
+        window.open(windowUrl, "Google Drive", windowFeatures + windowParams);
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            var csv = evt.target.result;
+            console.log('csv file :::' + csv);
+        }
         // window.location("","_blank");
 
-        window.addEventListener("message", function(event) {
+        window.addEventListener("message", function (event) {
             if (event.data && event.data.type === "FILE_SELECTED") {
-              var file = event.data.file;
-              var appEvent = $A.get("e.c:GoogleDriveEvent");
-              appEvent.setParams({ "files": [file] });
-              appEvent.fire();
+                var file = event.data.file;
+                console.log('event enter');
+                var appEvent = $A.get("e.c:GoogleDriveEvent");
+                appEvent.setParams({ "files": [file] });
+                appEvent.fire();
             }
-          })
-      },
-      handleFileSelection: function(component, event, helper) {
+        })
+    },
+    handleFileSelection: function (component, event, helper) {
         var fileInput = component.find("file");
         fileInput.set("v.files", event.getParam("files"));
-      }
-      
+    }
 
-    
+
+
 });
 
 // ({

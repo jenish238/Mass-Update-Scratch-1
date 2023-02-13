@@ -193,7 +193,7 @@ public with sharing class updateFieldsController {
         }
         
         // Set<String> listSql = new Set<String>();    
-        String soqlQuer = 'SELECT ';
+        // String soqlQuer = 'SELECT ';
         
         //Mapping of fields which data have to save into which fields
         // if(FieldToUpdateListWpr.size() > 0){
@@ -277,9 +277,9 @@ public with sharing class updateFieldsController {
             }
         }
 
-        List<wrapDataList> listData = new List<wrapDataList>();
-        listData.add(new wrapDataList(soqlQuer, csvAllDataMap));
-        System.debug('ListData====='+listData);
+        // List<wrapDataList> listData = new List<wrapDataList>();
+        // listData.add(new wrapDataList(soqlQuer, csvAllDataMap));
+        // System.debug('ListData====='+listData);
         System.debug('275=====>'+csvAllDataMap);
         return csvAllDataMap;
     }
