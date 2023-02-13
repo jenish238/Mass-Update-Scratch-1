@@ -303,10 +303,36 @@
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
             }
-            component.set("v.IsSpinner", false); 
+            component.set("v.IsSpinner", false);
         });
         $A.enqueueAction(action);
     },
+
+    // --------jenish gangani 11/02 for insert data
+    setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+
+        var action = component.get('c.setSobjectListForInsert');
+
+        action.setParams({
+            'allData': ResultOfAllData,
+            'FieldToUpdateList': sfPushDataListJson,
+            'selectObjectName': selectObjectName,
+        });
+        action.setCallback(this, function (response) {
+            var result = response.getState();
+            if (result == 'SUCCESS') {
+                var res = response.getReturnValue();
+                console.log('resfor insert::::' + JSON.stringify(res));
+                component.set("v.updateFieldList", res);
+            } else {
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
+            }
+            component.set("v.IsSpinner", false);
+        });
+        $A.enqueueAction(action);
+    },
+    // --------jenish gangani 11/02 for insert data 
+
 
     // --------jenish gangani 11/02 for insert data 
     setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
@@ -327,7 +353,7 @@
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
             }
-            component.set("v.IsSpinner", false); 
+            component.set("v.IsSpinner", false);
         });
         $A.enqueueAction(action);
     },
@@ -373,7 +399,7 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing1:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SFId")) {
                                 sfid++;
@@ -385,7 +411,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing2:::::' + JSON.stringify(fieldHeaderListing));
                         var csvCount = 0, sfCount = 0;
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SF")) {
@@ -400,7 +426,7 @@
                                 }
                             }
                         }
-                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing3:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
                                 csvCount++;
@@ -412,7 +438,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing4:::::::' + JSON.stringify(fieldHeaderListing));
                     }
                 }
                 var ListData = [], TempListData = [], srno = 1;
@@ -669,8 +695,8 @@
 
                 for (var key in ResultOfAllData) {
 
-                    console.log('key:::'+ key);
-                    console.log('ResultOfAllData:::'+ ResultOfAllData);
+                    console.log('key:::' + key);
+                    console.log('ResultOfAllData:::' + ResultOfAllData);
                     var i = 0;
                     var fieldHeaderListing = []
 
@@ -686,7 +712,7 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing1:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SFId")) {
                                 sfid++;
@@ -698,7 +724,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing2:::::' + JSON.stringify(fieldHeaderListing));
                         var csvCount = 0, sfCount = 0;
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SF")) {
@@ -713,7 +739,7 @@
                                 }
                             }
                         }
-                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing3:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
                                 csvCount++;
@@ -725,7 +751,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
+                        console.log('fieldHeaderListing4:::::::' + JSON.stringify(fieldHeaderListing));
                     }
                 }
                 var ListData = [], TempListData = [], srno = 1;
@@ -785,6 +811,6 @@
         });
         $A.enqueueAction(action);
     },
-    
+
 
 })
