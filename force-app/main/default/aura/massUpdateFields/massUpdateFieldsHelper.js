@@ -113,17 +113,23 @@
     callNexthandle: function (component, event, helper) {
         console.log('table Data=====' + component.get("v.tabledata"));
         console.log('length tab data ======' + component.get("v.tabledata").length);
+        // -----jenish gangani 12/02 
         var apiList = component.get('v.apiListofObject');
         var headerData = component.get("v.header");
         // headerData[0] = headerData[0].toUpperCase();
+        // -----jenish gangani 12/02 
+
         if (component.get("v.tabledata").length == 0) {
             helper.showToast(component, "Info", "Info!", "Please Upload File");
         } else if (component.get("v.selectedObject") == '') {
             helper.showToast(component, "Info", "Info!", "Please Select Object First");
         }
+        // -----jenish gangani 12/02 
         else if (!apiList.includes(headerData[0].toUpperCase())) {
             helper.showToast(component, "Info", "Info!", "Check Your first Recode Or Object");
         }
+        // -----jenish gangani 12/02 
+
         else {
             component.set("v.IsSpinner", true);
             var selectedStep = event.getSource().get("v.value");
@@ -149,51 +155,10 @@
             console.log('headerData Value ::: :::' + headerData);
             console.log('headerData Value in index  ::: :::' + headerData[0]);
 
-            // console.log('objectField Value of api name which JSON ::: :::' + objectField.apiName);
-            // console.log('objectField Value of api name  ::: :::' + JSON.stringify(objectField.apiName));
             console.log('objectField Value type ::: :::', typeof (objectField));
 
             console.log('objectField Value ::: :::', objectField);
 
-
-            // console.log('Array.prototype.includes.call(arrayLike, 2)' + Array.target.includes.call(objectField, headerData[0]));
-
-            // var c = JSON.stringify(objectField.apiName);
-            // console.log('c::::' + c);
-            // function exists(arr, search) {
-            //     return arr.some(row => row.includes(search));
-            // }
-            // console.log(exists(objectField, headerData[0]));
-            // objectField.includes(headerData[0])
-            // let x = objectField[0].includes('LastName');
-            // console.log('x::::' + x);
-
-            // let keys = Object.keys(objectField);
-            // console.log('key:::' + JSON.stringify(keys));
-
-            // let val = Object.values(objectField);
-            // console.log('key:::' + JSON.stringify(val));   
-
-            // let entries = Object.entries(objectField);
-            // console.log('entries' + entries);
-
-            // let searchValue = (property_value, array) => {
-            //     for (let i = 0; i < array.length; i++) {
-            //         // property_value = property_value.toUpperCase();
-            //         // console.log('aa'+ property_value);
-            //         if ((array[i].apiName).toUpperCase() == property_value.toUpperCase()) {
-            //             // console.log('st1'+array[i].apiNam);
-            //             // console.log('st2'+property_value.toLowerCase());
-            //             return false;
-            //         }
-            //     }
-            //     return true;
-            // };
-            // console.log('ans::::' + searchValue(headerData[0], objectField));
-
-            // if (searchValue(headerData[0], objectField)) {
-            //     helper.showToast(component, "Info", "Info!", "Check Your first Recode Or Object");
-            // }
             //    --------------------------------------------------------------------------------------------------         //jenish gangani 3/2/23
 
             // JENISH GANGANI 2/2/23 4:00AM
@@ -338,10 +303,36 @@
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
             }
-            component.set("v.IsSpinner", false);
+            component.set("v.IsSpinner", false); 
         });
         $A.enqueueAction(action);
     },
+
+    // --------jenish gangani 11/02 for insert data 
+    setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+
+        var action = component.get('c.setSobjectListForInsert');
+
+        action.setParams({
+            'allData': ResultOfAllData,
+            'FieldToUpdateList': sfPushDataListJson,
+            'selectObjectName': selectObjectName,
+        });
+        action.setCallback(this, function (response) {
+            var result = response.getState();
+            if (result == 'SUCCESS') {
+                var res = response.getReturnValue();
+                console.log('resfor insert::::' + JSON.stringify(res));
+                component.set("v.updateFieldList", res);
+            } else {
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
+            }
+            component.set("v.IsSpinner", false); 
+        });
+        $A.enqueueAction(action);
+    },
+    // --------jenish gangani 11/02 for insert data 
+
 
     getSobjectList: function (component, event, helper, resultdata, query, selectObjectName, tablePushDataListJson, headerData, sfPushDataListJson, selectedListOfFields) {
 
@@ -382,7 +373,7 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SFId")) {
                                 sfid++;
@@ -394,7 +385,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
                         var csvCount = 0, sfCount = 0;
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("SF")) {
@@ -409,7 +400,7 @@
                                 }
                             }
                         }
-                        console.log('fieldHeaderListing:::::' + fieldHeaderListing);
+                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
                                 csvCount++;
@@ -421,6 +412,7 @@
                                 fieldHeaderListing.push(data);
                             }
                         }
+                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
                     }
                 }
                 var ListData = [], TempListData = [], srno = 1;
@@ -574,6 +566,31 @@
         });
         $A.enqueueAction(action);
     },
+    saveRecordsToSFForInsert: function (component, event, helper) {
+        component.set("v.IsSpinner", true);
+        var action = component.get('c.insertRecode');
+        var data = component.get("v.updateFieldList");
+        var sfPushData = component.get('v.FieldToUpdateList');
+        var selectObjectName = component.get("v.selectedObject");
+        var sfPushDataListJson = JSON.stringify(sfPushData);
+
+        action.setParams({
+            'data': data,
+            'FieldToUpdateList': sfPushDataListJson,
+            'selectObjectName': selectObjectName
+        });
+        action.setCallback(this, function (response) {
+            var status = response.getState();
+            if (status == 'SUCCESS') {
+
+            } else {
+                component.set("v.IsSpinner", false);
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong saveRecordData");
+            }
+            component.set("v.IsSpinner", false);
+        });
+        $A.enqueueAction(action);
+    },
     showToast: function (component, type, title, message) {
         try {
             var toastEvent = $A.get("e.force:showToast");
@@ -616,7 +633,7 @@
     insertRecord: function (component, event, helper) {
         console.log('insertRecord called====');
         component.set("v.IsSpinner", true);
-        var action = component.get("c.insertRecode");
+        var action = component.get("c.setInsertQuery");
         console.log('action::::' + action);
         var selectObjectName = component.get("v.selectedObject");
         console.log('selectobjectName:::' + selectObjectName);
@@ -647,9 +664,119 @@
             console.log('resultFulll::::::' + resultFull);
 
             if (resultFull === 'SUCCESS' || resultFull === 'DRAFT') {
-                var res = response.getReturnValue();
-                var result = res[0];
-                console.log('result for the insertRecord ::::::' + JSON.stringify(result));
+                var ResultOfAllData = response.getReturnValue();
+                console.log('result of the res::::' + JSON.stringify(ResultOfAllData));
+
+                for (var key in ResultOfAllData) {
+
+                    console.log('key:::'+ key);
+                    console.log('ResultOfAllData:::'+ ResultOfAllData);
+                    var i = 0;
+                    var fieldHeaderListing = []
+
+
+                    if (i < Object.keys(ResultOfAllData[key]).length) {
+                        fieldHeaderListing = [];
+                        i = Object.keys(ResultOfAllData[key]).length;
+
+                        var sfid = 0;
+                        var srno = {};
+                        srno['label'] = "Sr No";
+                        srno['fieldName'] = "SrNo";
+                        srno['type'] = "text";
+                        srno['initialWidth'] = 70;
+                        fieldHeaderListing.push(srno);
+                        console.log('fieldHeaderListing1:::::' +JSON.stringify(fieldHeaderListing));
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("SFId")) {
+                                sfid++;
+                                var data = {};
+                                data['label'] = val.replace('SF', '');
+                                data['fieldName'] = val;
+                                data['type'] = 'url';
+                                data['typeAttributes'] = { label: { fieldName: val }, target: '_blank' };
+                                fieldHeaderListing.push(data);
+                            }
+                        }
+                        console.log('fieldHeaderListing2:::::' +JSON.stringify(fieldHeaderListing));
+                        var csvCount = 0, sfCount = 0;
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("SF")) {
+                                if (val !== "SFId") {
+                                    sfCount++;
+                                    var data = {};
+                                    data['label'] = val.replace('SF', '');
+                                    data['fieldName'] = val;
+                                    data['type'] = 'text';
+                                    data['cellAttributes'] = { class: { fieldName: 'sfcols' } };
+                                    fieldHeaderListing.push(data);
+                                }
+                            }
+                        }
+                        console.log('fieldHeaderListing3:::::' +JSON.stringify(fieldHeaderListing));
+                        for (var val in ResultOfAllData[key]) {
+                            if (val.startsWith("CSV")) {
+                                csvCount++;
+                                var data = {};
+                                data['label'] = val.replace('CSV', '');
+                                data['fieldName'] = val;
+                                data['type'] = 'text';
+                                data['cellAttributes'] = { class: { fieldName: 'csvcols' } };
+                                fieldHeaderListing.push(data);
+                            }
+                        }
+                        console.log('fieldHeaderListing4:::::::'+JSON.stringify(fieldHeaderListing));
+                    }
+                }
+                var ListData = [], TempListData = [], srno = 1;
+                for (var key in ResultOfAllData) {
+                    var data = {};
+                    data['SrNo'] = srno + '';
+                    for (var val in ResultOfAllData[key]) {
+                        if (val == 'SFId') {
+                            data[val] = '/' + ResultOfAllData[key][val];
+                        } else {
+                            data[val] = ResultOfAllData[key][val];
+                        }
+                        if (val.startsWith('SF')) {
+                            data['sfcols'] = 'sfcol';
+                        } else {
+                            data['csvcols'] = 'csvcol';
+                        }
+                    }
+                    srno++;
+                    ListData.push(data);
+                    if (TempListData.length < pageSize) {
+                        TempListData.push(data);
+                    }
+                }
+                if (ListData.length <= pageSize * (pageNumber)) {
+                    component.set('v.isLastPage', true);
+                } else {
+                    component.set('v.isLastPage', false);
+                }
+
+                var totalSize = ListData.length / pageSize;
+
+                console.log('TempListData==' + JSON.stringify(TempListData));
+                console.log('totalSize===' + totalSize);
+                console.log('sfid===' + sfid);
+                console.log('fieldHeaderListing===' + JSON.stringify(fieldHeaderListing));
+                console.log('ResultOfAllData===' + JSON.stringify(ResultOfAllData));
+                console.log('dataSize===' + ListData.length);
+                console.log('TableLightningData===' + JSON.stringify(TempListData));
+
+
+                component.set("v.totalPage", totalSize);
+                component.set("v.sfId", sfid);
+                component.set("v.columns", fieldHeaderListing);
+                component.set('v.ResultOfAllData', ListData);
+                component.set("v.dataSize", ListData.length);
+                component.set('v.TableLightningData', TempListData);
+
+                component.set("v.IsSpinner", false);
+                helper.setSobjectforInsertRecode(component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName);
+
 
             } else {
                 component.set("v.IsSpinner", false);
@@ -658,12 +785,6 @@
         });
         $A.enqueueAction(action);
     },
-    setRecord: function (component, event, helper) {
-
-
-
-
-    }
-
+    
 
 })

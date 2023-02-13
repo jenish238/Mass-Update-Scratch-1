@@ -190,7 +190,7 @@
                                         </lightning:select>
                                     <br/>
                              <!-- jenish gangani 8/2/23  -->
-                            <c:importCsvFile  header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
+                            <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
                             <!-- <lightning:fileUpload aura:id = "file"
                                     onuploadfinished="{!c.showcsvdata}"
                                     name = "file"
@@ -507,6 +507,9 @@
                                 <lightning:button variant="brand" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.PreviousStep2 }" /> 
                                 <aura:if isTrue="{!greaterthan(v.sfId,0)}">
                                     <lightning:button variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>
+                                </aura:if>
+                                <aura:if isTrue="{!v.operation=='insert'}">
+                                    <lightning:button variant="brand" value="{!v.currentStep}" label="insert" title="insert" onclick="{! c.saveRecordsToSFForInsert }"/>
                                 </aura:if>
                             </div>
                         </div>
