@@ -197,8 +197,10 @@
             console.log('selecteStep::::' + selectedStep);
 
             var nextStep = selectedStep == 'Step2' ? 'Step3' : 'finished';
+            // ------------ jenish gangani  get the opration value 
             var operation = component.get('v.operation');
             console.log('operation value::::' + operation);
+            // ------------ jenish gangani  get the opration value 
 
             if (nextStep == 'finished') {
                 component.set("v.finished", nextStep);
@@ -227,6 +229,19 @@
             component.set("v.finished", true);
         }
     },
+
+    // jenish gangani 11/02
+    saveRecordsToSFForInsert: function (component, event, helper) {
+        var selectedStep = event.getSource().get("v.value");
+        var nextStep = selectedStep == 'Step3' ? 'finished' : 'finished';
+
+        if (nextStep == 'finished') {
+            helper.saveRecordsToSFForInsert(component, event, helper);
+            component.set("v.currentStep", nextStep);
+            component.set("v.finished", true);
+        }
+    },
+    // jenish gangani 11/02
 
     nextPageRecord: function (component, event, helper) {
         var pageNumber = component.get('v.pageNumber');

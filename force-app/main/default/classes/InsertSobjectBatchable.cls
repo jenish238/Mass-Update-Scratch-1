@@ -1,65 +1,67 @@
-/******************************************************
- * Author       :   MV Clouds
- * Date         :   24-03-2020
- * Description  :   Update Data into Salesforce in batch
-*******************************************************/
-
-global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Database.Stateful {
-
-    global Integer recordsProcessed = 0;
+global class InsertSobjectBatchable implements Database.Batchable<sObject>, Database.Stateful  {
     public List<sObject> lstSobject;
     public String strcsv;
     public String sObjectName;
     public List<String> csvfield;
     public String csvErrorValue;
     public String csvValue;
-    
-    public UpdateSobjectBatchable(List<sObject> dataList, String strcsvfield, String selectObjectName, List<String> csvF){
+
+    public InsertSobjectBatchable(List<sObject> dataList, String strcsvfield, String selectObjectName, List<String> csvF){
         lstSobject = dataList;
         strcsv = strcsvfield;
         sObjectName = selectObjectName;
         csvfield = csvF;
     }
-    
     global List<sObject> start(Database.BatchableContext bc) {
         csvValue = strcsv + ', Status ' + '\n ';
         csvErrorValue = strcsv + ', Status ' + '\n';
         return lstSobject;
     }
-    
-    // Update data and make success and error list
     global void execute(Database.BatchableContext bc, List<sObject> scope){
-
+        System.debug('lstSobject=='+lstSobject);
+        System.debug('strcsv=='+strcsv);
+        System.debug('sObjectName=='+sObjectName);
+        System.debug('csvfield=='+csvfield);
         if(scope.getSObjectType().getDescribe().isAccessible() && scope.getSObjectType().getDescribe().isUpdateable()){
-            Database.SaveResult[] resultList = database.update(scope, false);
+            Database.SaveResult[] resultList = database.insert(scope, false);
+            System.debug('resultList=='+resultList);
 
             List<String> successList = new List<String>();
-            List<String> errorList = new List<String>();
+            List<SObject> errorList = new List<SObject>();
             Map<String, String> errorDetailMap = new Map<String, String>();
+            List<String> errorMessage = new List<String>();
+            // String errorMessage;
+
             
             for (Integer i=0;i<resultList.size();i++){
-                System.debug('resultList=='+resultList);
+                
                 if(resultList[i].isSuccess()) {
                     System.debug('success===');
                     successList.add(resultList[i].getId());
                 } 
-                else if(!resultList[i].isSuccess()) {
-                    System.debug('Error===');
-                    errorList.add(lstSobject.get(i).Id); 
+                // if(!resultList[i].isSuccess())
+                else if(resultList[i].getId() == null){
+                    
+                    errorList.add(lstSobject.get(i)); 
                     Database.Error errors =  resultList[i].getErrors().get(0);
-                    errorDetailMap.put(lstSobject.get(i).Id , errors.getMessage());
+                    System.debug('error massage:::'+ errors);
+                    errorMessage.add(errors.getMessage());
+                    // errorDetailMap.put(lstSobject.get(i).Id , errors.getMessage());
                 }
+                System.debug('erorList data:::::'+ errorList);
+                System.debug('csvErrorValue==='+csvErrorValue);
             }
             
-			System.debug('success Id=='+successList);
-			System.debug('Error Id=='+errorList);          
-            
+
             String querySuccess = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: successList ';
             List<SObject> sList = (database.query(querySuccess));
             SObjectType r = ((SObject)(Type.forName('Schema.'+sObjectName).newInstance())).getSObjectType();
             DescribeSObjectResult d = r.getDescribe();
+
+            System.debug('Success List==='+sList);
             for(SObject sobj : sList){
-                
+                System.debug('In Success List==');
+
                 for(String csvName : csvfield){ 
                     String fieldType = String.valueOf(d.fields.getMap().get(csvName).getDescribe().getType());
                     if(sobj.get(csvName) != null){
@@ -82,14 +84,17 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
                         csvValue += '' + ',';
                     } 
                 }
-                csvValue = csvValue + ' Updated Record ' + '\n';
+                csvValue = csvValue + ' Insert Record ' + '\n';
             }    
             
-            
-            String queryError = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: errorList ';
-            List<SObject> eList = (database.query(queryError));
-            
+
+            // String queryError = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: errorList ';
+            // List<SObject> eList = (database.query(queryError));
+            List<SObject> eList = errorList;
+            System.debug('eList=='+eList);
+            Integer a =0;
             for(SObject sobj : eList){
+                System.debug('In Error Loop==');
                 for(String csvName : csvfield){
                     if(sobj.get(csvName) != null){
                         csvErrorValue += sobj.get(csvName) + ',';
@@ -97,14 +102,18 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
                         csvErrorValue += '' + ',';
                     } 
                 }
-                csvErrorValue += 'error : ' + errorDetailMap.get(sobj.get('Id')+'');
+                // csvErrorValue += 'error : ' + errorDetailMap.get(sobj.get('Id')+'');
+                csvErrorValue += 'error : ' + errorMessage[a] + '';
                 csvErrorValue += '\n';
+                a++;
             }
+             
+           
+
         }
-    }    
-    // send mail to owner with success and error data
+    }
     global void finish(Database.BatchableContext bc){
-        
+        System.debug('Finish Called====');
         List<Messaging.Emailfileattachment> efaList = new List<Messaging.Emailfileattachment>();
         
         Messaging.EmailFileAttachment csvAttc1 = new Messaging.EmailFileAttachment();
@@ -116,6 +125,7 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
         Messaging.EmailFileAttachment csvAttc2 = new Messaging.EmailFileAttachment();
         blob csvBlob2 = Blob.valueOf(csvErrorValue);
         string csvname2= 'ErrorData.csv';
+        System.debug('error converted==='+csvBlob2.tostring());
         csvAttc2.setFileName(csvname2);
         csvAttc2.setBody(csvBlob2);
         
@@ -124,7 +134,7 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
         
         try{
             Messaging.SingleEmailMessage email =new Messaging.SingleEmailMessage();
-            String[] toAddresses = new list<string> { 'jenishgangani238@gmail.com' };
+            String[] toAddresses = new list<string> { 'ritu.p@mvclouds.com' };
             String subject = sObjectName + ' Operation Completed successfully.' ;
             email.setSubject(subject);
             email.setHtmlBody('Dear '+ UserInfo.getFirstName() + ' ' + UserInfo.getLastName() +',<br /><br />'
@@ -183,5 +193,6 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
         }else{
             System.debug('User does not have access to Content Version!');
         }
-    }    
+    
+    }
 }

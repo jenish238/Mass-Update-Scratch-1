@@ -12,6 +12,7 @@
             var fName = event.getSource().get("v.files")[0]["name"];
         }
 
+
         if (fName.indexOf(".csv") !== -1) {
             console.log("fileName=====" + fileName);
 
@@ -25,7 +26,7 @@
                 reader.readAsText(file, "UTF-8");
                 reader.onload = function (evt) {
                     var csv = evt.target.result;
-                    console.log('typeof csvf::'+typeof(csv));
+                    console.log('typeof csvf::' + typeof (csv));
                     console.log("csv:::" + csv);
                     console.log('csv length===', csv.length);
                     if (csv.length > 4000000) {
@@ -144,7 +145,154 @@
         } else {
             helper.showToast("Info", "Info!", "Please upload only CSV file");
         }
+    },
+    redirectToDrive: function (component, event, helper) {
+        console.log('redirectToDrive');
+        // <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+        var clientId = '743502205155-0empokv5a49fdhtf7lm38ucsk0d0eup6.apps.googleusercontent.com';
+        // var clientSecret = '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';
+        var key = 'AIzaSyDpqfCp4v5Ykc201OEUgscQPsZkKAtGRIQ';
+        var project_ID = '743502205155';
+        var oauthToken;
+        var PickerApiLoaded = false;
+        var scope = 'https://www.googleapis.com/auth/drive.file';
+        pickerDialog();
+        function pickerDialog() {
+            console.log('h1');
+            loadpicker();
+        }
+        function loadpicker() {
+            console.log('h2');
+            gapi.load('auth', { 'callback': onAuthApiLoad })
+            gapi.load('picker', { 'callback': onPickerApiLoad })
+
+        }
+        function onAuthApiLoad() {
+            console.log('h3');
+            window.gapi.auth.authorize({
+
+                'client_id': clientId,
+                'scope': scope,
+                'immediate': false
+            },
+
+                handleAuthResult
+            )
+
+
+        }
+        function onPickerApiLoad() {
+            console.log('h4');
+            onPickerApiLoad = true
+            createPicker()
+        }
+        function handleAuthResult() {
+            console.log('h5');
+            if (authResult && !authResult.error) {
+                oauthToken = authResult.access_token
+                createPicker()
+            }
+        }
+        function createPicker() {
+            console.log('h6');
+            if (PickerApiLoaded && oauthToken) {
+                var view = new google.picker.View(google.picker.ViewId.DOCS)
+                view.setMimeTypes('image/png')
+                var picker = new google.picker.PickerBuilder()
+                    .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                    .setAppId(project_ID)
+                    .setOAuthToken(oauthToken)
+                    .addView(view)
+                    .addView(new google.picker.DocsUploadView())
+                    .setDeveloperKey(key)
+                    .setCallback(pickerCallback)
+                    .build()
+
+                picker.setVisible(true)
+            }
+        }
+        function pickerCallBack(data) {
+            console.log('h7');
+            if (data.action == google.picker.Action.PICKED) {
+                var field = data.docs[0].id
+                alert('thissss:::' + field)
+            }
+
+        }
+
+
+
+        // window.open("https://drive.google.com/drive/my-drive", "_blank");
+        var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+        var windowParams = "width=600,height=400";
+        // var windowUrl = "https://www.googleapis.com/auth/drive.file";
+        // var windowUrl = "https://drive.google.com/drive/my-drive";
+        var windowUrl = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount";
+
+
+
+        window.open(windowUrl, "Google Drive", windowFeatures + windowParams);
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            var csv = evt.target.result;
+            console.log('csv file :::' + csv);
+            // client - IdleDeadline; -743502205155 - 0empokv5a49fdhtf7lm38ucsk0d0eup6.apps.googleusercontent.com
+            // secret = GOCSPX - rFGNruy9gKUBpQqMD4vv - nvXCfzm
+            // api key = AIzaSyDpqfCp4v5Ykc201OEUgscQPsZkKAtGRIQ
+            // project Number: -743502205155
+        }
+        // window.location("","_blank");
+
+        window.addEventListener("message", function (event) {
+            if (event.data && event.data.type === "FILE_SELECTED") {
+                var file = event.data.file;
+                console.log('event enter');
+                var appEvent = $A.get("e.c:GoogleDriveEvent");
+                appEvent.setParams({ "files": [file] });
+                appEvent.fire();
+            }
+        })
+    },
+    handleFileSelection: function (component, event, helper) {
+        var fileInput = component.find("file");
+        fileInput.set("v.files", event.getParam("files"));
+    },
+
+    scriptsLoaded: function (cmp, evetn, helper) {
+        console.log('script loadeed ');
+    },
+    selectFile: function (cmp) {
+        cmp.set("v.isLoading", true);
+
+        var accessToken = 'sl.BYyjccBtFESoSVyMUfog8FBQP8ACUmhj9hxysPMaPD-33XIZv1KoXbW7RuMHwnlJoKo9m3FH-0YyyTYse8ZbeB7Np_gbWytJy5eAYrX3-TL1WQr1iG7TY-xUNRgxANGilSKSxMYTNMw';
+        var filePath = '/path/to/csv/file.csv';
+
+        axios.get('https://api.dropboxapi.com/2/files/download', {
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Dropbox-API-Arg': JSON.stringify({ path: filePath })
+            },
+            responseType: 'text'
+        })
+            .then(function (response) {
+                var contents = response.data;
+                var rows = contents.split("\n");
+                var data = [];
+                for (var i = 0; i < rows.length; i++) {
+                    data.push(rows[i].split(","));
+                }
+                cmp.set("v.data", data);
+            })
+            .catch(function (error) {
+                console.error(error);
+            })
+            .finally(function () {
+                cmp.set("v.isLoading", false);
+            });
     }
+
 });
 
 // ({
