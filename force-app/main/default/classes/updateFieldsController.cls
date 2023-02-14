@@ -705,9 +705,9 @@ public with sharing class updateFieldsController {
         UpdateSobjectBatchable updateSObject = new UpdateSobjectBatchable(dataList, strcsvfield, selectObjectName, csvField);
         Database.executeBatch(updateSObject);
     }
-    // this method for insert recode using batch class jenish gangani 11/02/23
+    // this method for insert record using batch class jenish gangani 11/02/23
     @AuraEnabled
-    public static void insertRecode(String data, String FieldToUpdateList, String selectObjectName){
+    public static void insertRecord(String data, String FieldToUpdateList, String selectObjectName){
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);

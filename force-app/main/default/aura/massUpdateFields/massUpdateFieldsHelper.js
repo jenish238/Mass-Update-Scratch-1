@@ -126,7 +126,7 @@
         }
         // -----jenish gangani 12/02 
         else if (!apiList.includes(headerData[0].toUpperCase())) {
-            helper.showToast(component, "Info", "Info!", "Check Your first Recode Or Object");
+            helper.showToast(component, "Info", "Info!", "Check Your first Record Or Object");
         }
         // -----jenish gangani 12/02 
 
@@ -309,7 +309,7 @@
     },
 
     // --------jenish gangani 11/02 for insert data
-    setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+    setSobjectforInsertRecord: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
 
         var action = component.get('c.setSobjectListForInsert');
 
@@ -325,7 +325,7 @@
                 console.log('resfor insert::::' + JSON.stringify(res));
                 component.set("v.updateFieldList", res);
             } else {
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecord");
             }
             component.set("v.IsSpinner", false);
         });
@@ -335,7 +335,7 @@
 
 
     // --------jenish gangani 11/02 for insert data 
-    setSobjectforInsertRecode: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+    setSobjectforInsertRecord: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
 
         var action = component.get('c.setSobjectListForInsert');
 
@@ -351,7 +351,7 @@
                 console.log('resfor insert::::' + JSON.stringify(res));
                 component.set("v.updateFieldList", res);
             } else {
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecode");
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecord");
             }
             component.set("v.IsSpinner", false);
         });
@@ -594,7 +594,7 @@
     },
     saveRecordsToSFForInsert: function (component, event, helper) {
         component.set("v.IsSpinner", true);
-        var action = component.get('c.insertRecode');
+        var action = component.get('c.insertRecord');
         var data = component.get("v.updateFieldList");
         var sfPushData = component.get('v.FieldToUpdateList');
         var selectObjectName = component.get("v.selectedObject");
@@ -712,33 +712,9 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        console.log('fieldHeaderListing1:::::' + JSON.stringify(fieldHeaderListing));
-                        for (var val in ResultOfAllData[key]) {
-                            if (val.startsWith("SFId")) {
-                                sfid++;
-                                var data = {};
-                                data['label'] = val.replace('SF', '');
-                                data['fieldName'] = val;
-                                data['type'] = 'url';
-                                data['typeAttributes'] = { label: { fieldName: val }, target: '_blank' };
-                                fieldHeaderListing.push(data);
-                            }
-                        }
-                        console.log('fieldHeaderListing2:::::' + JSON.stringify(fieldHeaderListing));
+                        
                         var csvCount = 0, sfCount = 0;
-                        for (var val in ResultOfAllData[key]) {
-                            if (val.startsWith("SF")) {
-                                if (val !== "SFId") {
-                                    sfCount++;
-                                    var data = {};
-                                    data['label'] = val.replace('SF', '');
-                                    data['fieldName'] = val;
-                                    data['type'] = 'text';
-                                    data['cellAttributes'] = { class: { fieldName: 'sfcols' } };
-                                    fieldHeaderListing.push(data);
-                                }
-                            }
-                        }
+                       
                         console.log('fieldHeaderListing3:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {
@@ -801,7 +777,7 @@
                 component.set('v.TableLightningData', TempListData);
 
                 component.set("v.IsSpinner", false);
-                helper.setSobjectforInsertRecode(component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName);
+                helper.setSobjectforInsertRecord(component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName);
 
 
             } else {

@@ -15,6 +15,16 @@
      <ltng:require 
     scripts="{!$Resource.gapifile  + '/api.js'}"
     afterScriptsLoaded="{!c.scriptsLoaded}" />
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="isLoading" type="Boolean"/>
+
+    <div>
+        <lightning:button label="Select file from Dropbox" onclick="{!c.selectFile}" />
+        <aura:if isTrue="{!v.isLoading}">
+            <lightning:spinner variant="brand" size="medium" />
+        </aura:if>
+        <lightning:datatable data="{!v.data}" />
+    </div>
 
    <!-- jenish gangani 9/2/23 event  -->
 

@@ -27,8 +27,11 @@ global class InsertSobjectBatchable implements Database.Batchable<sObject>, Data
             System.debug('resultList=='+resultList);
 
             List<String> successList = new List<String>();
-            List<String> errorList = new List<String>();
+            List<SObject> errorList = new List<SObject>();
             Map<String, String> errorDetailMap = new Map<String, String>();
+            List<String> errorMessage = new List<String>();
+            // String errorMessage;
+
             
             for (Integer i=0;i<resultList.size();i++){
                 
@@ -36,13 +39,16 @@ global class InsertSobjectBatchable implements Database.Batchable<sObject>, Data
                     System.debug('success===');
                     successList.add(resultList[i].getId());
                 } 
-                else if(!resultList[i].isSuccess()) {
+                // if(!resultList[i].isSuccess())
+                else if(resultList[i].getId() == null){
                     
-                    errorList.add(lstSobject.get(i).Id); 
+                    errorList.add(lstSobject.get(i)); 
                     Database.Error errors =  resultList[i].getErrors().get(0);
-                    errorDetailMap.put(lstSobject.get(i).Id , errors.getMessage());
+                    System.debug('error massage:::'+ errors);
+                    errorMessage.add(errors.getMessage());
+                    // errorDetailMap.put(lstSobject.get(i).Id , errors.getMessage());
                 }
-                
+                System.debug('erorList data:::::'+ errorList);
                 System.debug('csvErrorValue==='+csvErrorValue);
             }
             
@@ -82,9 +88,11 @@ global class InsertSobjectBatchable implements Database.Batchable<sObject>, Data
             }    
             
 
-            String queryError = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: errorList ';
-            List<SObject> eList = (database.query(queryError));
+            // String queryError = ' SELECT ' + strcsv + ' FROM ' + sObjectName + ' WHERE Id =: errorList ';
+            // List<SObject> eList = (database.query(queryError));
+            List<SObject> eList = errorList;
             System.debug('eList=='+eList);
+            Integer a =0;
             for(SObject sobj : eList){
                 System.debug('In Error Loop==');
                 for(String csvName : csvfield){
@@ -94,8 +102,10 @@ global class InsertSobjectBatchable implements Database.Batchable<sObject>, Data
                         csvErrorValue += '' + ',';
                     } 
                 }
-                csvErrorValue += 'error : ' + errorDetailMap.get(sobj.get('Id')+'');
+                // csvErrorValue += 'error : ' + errorDetailMap.get(sobj.get('Id')+'');
+                csvErrorValue += 'error : ' + errorMessage[a] + '';
                 csvErrorValue += '\n';
+                a++;
             }
              
            
@@ -124,7 +134,7 @@ global class InsertSobjectBatchable implements Database.Batchable<sObject>, Data
         
         try{
             Messaging.SingleEmailMessage email =new Messaging.SingleEmailMessage();
-            String[] toAddresses = new list<string> { 'ritu.p@mvclouds.com' };
+            String[] toAddresses = new list<string> { 'jenish.g@mvclouds.com' };
             String subject = sObjectName + ' Operation Completed successfully.' ;
             email.setSubject(subject);
             email.setHtmlBody('Dear '+ UserInfo.getFirstName() + ' ' + UserInfo.getLastName() +',<br /><br />'
