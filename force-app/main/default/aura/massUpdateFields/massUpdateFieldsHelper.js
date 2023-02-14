@@ -183,7 +183,7 @@
             console.log('header length=====' + headerData.length);
             console.log('objectField11======' + JSON.stringify(objectField));
 
-
+            //auto match field
             for (var i = 0; i < headerData.length; i++) {
                 var data = {};
                 data['csvfield'] = headerData[i];
@@ -335,28 +335,28 @@
 
 
     // --------jenish gangani 11/02 for insert data 
-    setSobjectforInsertRecord: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
+    // setSobjectforInsertRecord: function (component, event, helper, ResultOfAllData, sfPushDataListJson, selectObjectName) {
 
-        var action = component.get('c.setSobjectListForInsert');
+    //     var action = component.get('c.setSobjectListForInsert');
 
-        action.setParams({
-            'allData': ResultOfAllData,
-            'FieldToUpdateList': sfPushDataListJson,
-            'selectObjectName': selectObjectName,
-        });
-        action.setCallback(this, function (response) {
-            var result = response.getState();
-            if (result == 'SUCCESS') {
-                var res = response.getReturnValue();
-                console.log('resfor insert::::' + JSON.stringify(res));
-                component.set("v.updateFieldList", res);
-            } else {
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecord");
-            }
-            component.set("v.IsSpinner", false);
-        });
-        $A.enqueueAction(action);
-    },
+    //     action.setParams({
+    //         'allData': ResultOfAllData,
+    //         'FieldToUpdateList': sfPushDataListJson,
+    //         'selectObjectName': selectObjectName,
+    //     });
+    //     action.setCallback(this, function (response) {
+    //         var result = response.getState();
+    //         if (result == 'SUCCESS') {
+    //             var res = response.getReturnValue();
+    //             console.log('resfor insert::::' + JSON.stringify(res));
+    //             component.set("v.updateFieldList", res);
+    //         } else {
+    //             helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobjectforInsertRecord");
+    //         }
+    //         component.set("v.IsSpinner", false);
+    //     });
+    //     $A.enqueueAction(action);
+    // },
     // --------jenish gangani 11/02 for insert data 
 
 
@@ -712,9 +712,9 @@
                         srno['type'] = "text";
                         srno['initialWidth'] = 70;
                         fieldHeaderListing.push(srno);
-                        
+
                         var csvCount = 0, sfCount = 0;
-                       
+
                         console.log('fieldHeaderListing3:::::' + JSON.stringify(fieldHeaderListing));
                         for (var val in ResultOfAllData[key]) {
                             if (val.startsWith("CSV")) {

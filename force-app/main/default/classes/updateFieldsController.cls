@@ -447,6 +447,7 @@ public with sharing class updateFieldsController {
                 if(s != null && s != ''){
                 	if(fieldType == 'NUMBER' || fieldType == 'DOUBLE' || fieldType == 'Boolean' || fieldType == 'CURRENCY' || fieldType == 'DATETIME' || fieldType == 'PERCENT' || fieldType == 'TIME'){
                         whereStr += s+',';
+                        System.debug('450=====>'+ whereStr);
                     }else if(fieldType == 'DATE'){
                         whereStr += String.valueOf(date.parse(s))+',';    
                     }else{
@@ -532,6 +533,8 @@ public with sharing class updateFieldsController {
                         }
                         else if(fieldMap.get(ucv.SObjectField).getDescribe().getType() == Schema.DisplayType.DATETIME){
                             System.debug('Date Time Field Not Supported');
+                           System.debug('535 for data/Time::::'+ String.valueOf(s.get(ucv.SObjectField)).removeEnd(' 00:00:00') + '^');
+                           System.debug('536::::::'+ String.valueOf(s.get(ucv.SObjectField)).removeEnd(' 00:00:00') + '^');
                         }
                         else{
                         	id += s.get(ucv.SObjectField)+'^';
@@ -550,6 +553,9 @@ public with sharing class updateFieldsController {
                     for(String a : selectedListOfFields){
                         if(lstSalesforce.get(a) != null ){
                             if(fieldMap.get(a).getDescribe().getType() == Schema.DisplayType.DATETIME){
+                                System.debug('disaplay data and time not supported');
+                                System.debug('556===>'+ lstSalesforce.get(a));
+                                System.debug('557=====>'+ String.valueOf(Date.valueOf(lstSalesforce.get(a))));
                                 
                             }else if(fieldMap.get(a).getDescribe().getType() == Schema.DisplayType.DATE){
                                 lstStr.put('SF' + a , String.valueOf(Date.valueOf(lstSalesforce.get(a))));
@@ -574,6 +580,7 @@ public with sharing class updateFieldsController {
     // It will set list of Sobject for updating data into salesforce
     @AuraEnabled
     public static String setSobjectList(Map<String,Map<String,String>> allData, String FieldToUpdateList, String selectObjectName){
+
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr             = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(FieldToUpdateList       , List<uploadCsvFileJsonWrapper>.class);
         List<SObject> objList = new List<SObject>(); 
        
@@ -602,6 +609,7 @@ public with sharing class updateFieldsController {
                                 }
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
+                                System.debug('setSobjectList Method in DateTime Field');
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
