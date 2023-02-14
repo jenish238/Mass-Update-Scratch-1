@@ -271,25 +271,25 @@
         axios.get('https://api.dropboxapi.com/2/files/download', {
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
-                'Dropbox-API-Arg': JSON.stringify({path: filePath})
+                'Dropbox-API-Arg': JSON.stringify({ path: filePath })
             },
             responseType: 'text'
         })
-        .then(function (response) {
-            var contents = response.data;
-            var rows = contents.split("\n");
-            var data = [];
-            for (var i = 0; i < rows.length; i++) {
-                data.push(rows[i].split(","));
-            }
-            cmp.set("v.data", data);
-        })
-        .catch(function (error) {
-            console.error(error);
-        })
-        .finally(function () {
-            cmp.set("v.isLoading", false);
-        });
+            .then(function (response) {
+                var contents = response.data;
+                var rows = contents.split("\n");
+                var data = [];
+                for (var i = 0; i < rows.length; i++) {
+                    data.push(rows[i].split(","));
+                }
+                cmp.set("v.data", data);
+            })
+            .catch(function (error) {
+                console.error(error);
+            })
+            .finally(function () {
+                cmp.set("v.isLoading", false);
+            });
     }
 
 });
