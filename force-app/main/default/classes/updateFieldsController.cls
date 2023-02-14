@@ -59,10 +59,9 @@ public with sharing class updateFieldsController {
 
                 if(field.apiName == 'Id'){
                     lstfieldname.add(field);
-                }else if(dfield.isUpdateable() == true &&  dfield.getType() != Schema.DisplayType.DATETIME && dfield.getType() != Schema.DisplayType.TIME){
+                // }else if(dfield.isUpdateable() == true &&  dfield.getType() != Schema.DisplayType.DATETIME && dfield.getType() != Schema.DisplayType.TIME){
+                }else if(dfield.isUpdateable() == true && dfield.getType() != Schema.DisplayType.TIME){
                     lstfieldname.add(field);
-                   
-
                 }
             }
         }
