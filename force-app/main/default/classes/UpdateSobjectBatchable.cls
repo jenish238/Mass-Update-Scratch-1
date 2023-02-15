@@ -124,7 +124,7 @@ global class UpdateSobjectBatchable implements Database.Batchable<sObject>, Data
         
         try{
             Messaging.SingleEmailMessage email =new Messaging.SingleEmailMessage();
-            String[] toAddresses = new list<string> { 'jenishgangani238@gmail.com' };
+            String[] toAddresses = new list<string> { 'jenish.g@mvclouds.com' };
             String subject = sObjectName + ' Operation Completed successfully.' ;
             email.setSubject(subject);
             email.setHtmlBody('Dear '+ UserInfo.getFirstName() + ' ' + UserInfo.getLastName() +',<br /><br />'

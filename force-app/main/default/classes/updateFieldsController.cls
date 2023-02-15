@@ -346,6 +346,7 @@ public with sharing class updateFieldsController {
             strValue = new Map<String, String>();
             k = 0;
             data=data.trim(); 
+            System.debug('349 data ====>'+ data);
             if(data != ''){  
                 if(data.endsWith(',')) data += ' ';
                 
@@ -380,8 +381,10 @@ public with sharing class updateFieldsController {
                 for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
                     if(IndexFieldCSV.get(field.csvfield)!=null){
                         if(StringData[IndexFieldCSV.get(field.csvfield)].trim().startsWith('"') && StringData[IndexFieldCSV.get(field.csvfield)].trim().endsWith('"')){
+                            System.debug('if in query');
                         	strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim().removeStart('"').removeEnd('"'));    
                         }else{
+                            System.debug('else in query');
                             strValue.put('CSV' + field.csvfield , StringData[IndexFieldCSV.get(field.csvfield)].trim());    
                         }                       
                     }
@@ -433,6 +436,7 @@ public with sharing class updateFieldsController {
         String allstring = string.join(lstFetchField,',');
 
         soqlQuer += allstring;
+        System.debug('437===>soqlQuer===>'+ soqlQuer);
         soqlQuer += ' FROM ' +selectObjectName+ ' WHERE ';
         
         //****************************************** Where condition start from here ***********************************!!
@@ -443,6 +447,7 @@ public with sharing class updateFieldsController {
         for(String st1 : keyValueMap.keyset()){
             String whereStr = '(';
             String fieldType = String.valueOf(d.fields.getMap().get(st1).getDescribe().getType());        
+            System.debug('fieldType of 450=====>'+ fieldType);
             for(String s : keyValueMap.get(st1)){
                 if(s != null && s != ''){
                 	if(fieldType == 'NUMBER' || fieldType == 'DOUBLE' || fieldType == 'Boolean' || fieldType == 'CURRENCY' || fieldType == 'DATETIME' || fieldType == 'PERCENT' || fieldType == 'TIME'){
@@ -518,8 +523,12 @@ public with sharing class updateFieldsController {
         }
         try {
             List<SObject> SObjectList = database.query(query);  
+
+            System.debug('SobjectList ===> 527===>'+ SObjectList);
             
             Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(selectObjectName).getDescribe().fields.getMap();
+
+            System.debug('fieldMap=====531===>'+ fieldMap);
             
             Map<String, SObject> abcList = new Map<String, SObject>();
             
@@ -529,12 +538,13 @@ public with sharing class updateFieldsController {
                 for(uploadCsvFileJsonWrapper ucv : tablePushDataListJsonDeserialize){
                     if(IndexFieldCSV.get(ucv.csvfield) != null){
                         if(fieldMap.get(ucv.SObjectField).getDescribe().getType() == Schema.DisplayType.DATE){
+                            System.debug('field type is date');
                             id += String.valueOf(s.get(ucv.SObjectField)).removeEnd(' 00:00:00') + '^';
                         }
                         else if(fieldMap.get(ucv.SObjectField).getDescribe().getType() == Schema.DisplayType.DATETIME){
                             System.debug('Date Time Field Not Supported');
                            System.debug('535 for data/Time::::'+ String.valueOf(s.get(ucv.SObjectField)).removeEnd(' 00:00:00') + '^');
-                           System.debug('536::::::'+ String.valueOf(s.get(ucv.SObjectField)).removeEnd(' 00:00:00') + '^');
+                           System.debug('536::::::'+ String.valueOf(s.get(ucv.SObjectField)));
                         }
                         else{
                         	id += s.get(ucv.SObjectField)+'^';
@@ -545,6 +555,7 @@ public with sharing class updateFieldsController {
                 abcList.put(id, s);
                     
             }
+            System.debug('abcList===> '+ abcList);
             for(String str : abcList.keyset()){
                 if(csvData.containsKey(str)){
                     Map<String,String> lstStr = csvData.get(str);
@@ -580,6 +591,7 @@ public with sharing class updateFieldsController {
     // It will set list of Sobject for updating data into salesforce
     @AuraEnabled
     public static String setSobjectList(Map<String,Map<String,String>> allData, String FieldToUpdateList, String selectObjectName){
+        System.debug('setSobjectList method call');
 
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr             = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(FieldToUpdateList       , List<uploadCsvFileJsonWrapper>.class);
         List<SObject> objList = new List<SObject>(); 
@@ -590,19 +602,22 @@ public with sharing class updateFieldsController {
         
         for(Map<String,String> addMap : allData.values()){
             SObject sobj = sobj1.newSObject();
-            System.debug(FieldToUpdateListWpr);
+            System.debug('FieldToUpdateListWpr====> 605====>'+ FieldToUpdateListWpr);
             for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
                     if(addMap.get('CSV'+field.csvfield) != ''){
                         if(sobj.Id == null){
                             sobj.put('Id' , addMap.get('SFId'));
                         }
                         Schema.DisplayType fielddataType = fieldMap.get(field.SObjectField).getDescribe().getType();
+                        System.debug('fielddataType===>612==>'+ fielddataType);
                         if(fieldMap.get(field.SObjectField).getDescribe().isAccessible() && fieldMap.get(field.SObjectField).getDescribe().isUpdateable()){
                             if(fielddataType == Schema.DisplayType.PERCENT || fielddataType == Schema.DisplayType.CURRENCY || fielddataType == Schema.DisplayType.Double){
                                 sobj.put(field.SObjectField, Decimal.valueof(addMap.get('CSV'+field.csvfield).trim()));
                             }
                             else if(fielddataType == Schema.DisplayType.DATE){
                                 try{
+                                    System.debug('619==>date filed ===>'+ addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim());
+                                    System.debug('620==>date filed ===>'+ addMap.get('CSV'+field.csvfield).trim());
                                     sobj.put(field.SObjectField, date.parse(addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()));      
                                 }catch(Exception e){
                                     System.debug('Error ' + e.getMessage());
@@ -610,6 +625,26 @@ public with sharing class updateFieldsController {
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
                                 System.debug('setSobjectList Method in DateTime Field');
+                                // https://salesforce.stackexchange.com/questions/247210/system-typeexception-invalid-date-time-2019-01-03t002601-711-0200
+                                try {
+                                    // sobj.put(field.SObjectField, addMap.get('CSV'+field.csvfield).trim());
+                                   // String a = addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00';
+                                    //System.debug('a::::'+ a);
+                                    // a = a + '.711-02:00';
+                                    //a = a + '.000-00:00';
+                                    //System.debug('agian a of 634==> '+ a);
+
+                                    // 2023-02-12T05:20:52.000Z
+                                    // String data = '2019-01-03T00:26:01.711-02:00';
+                                    //String data = a;
+                                    //System.debug('data of all 639====>' + data);
+                                   // Datetime dt = (DateTime)JSON.deserialize('"' + (addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00') + '"', DateTime.class);
+                                     sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + (addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00') + '"', DateTime.class)); 
+                                    //  sobj.put(field.SObjectField, DateTime.parse(addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim())); 
+                                } catch (Exception e) {
+                                    System.debug('Error message for date/time ' + e.getMessage());
+                                }
+                               
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
@@ -629,6 +664,7 @@ public with sharing class updateFieldsController {
                 objList.add(sobj);    
             }
         }
+        System.debug('objList===>645===>'+ objList);
         return JSON.serialize(objList);
     }
 
