@@ -625,10 +625,12 @@ public with sharing class updateFieldsController {
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
                                 System.debug('setSobjectList Method in DateTime Field');
+                                // jenish gangani update datetime field
                                 // https://salesforce.stackexchange.com/questions/247210/system-typeexception-invalid-date-time-2019-01-03t002601-711-0200
                                 try {
                                     // sobj.put(field.SObjectField, addMap.get('CSV'+field.csvfield).trim());
                                    // String a = addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00';
+                                 String a = (addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00';
                                     //System.debug('a::::'+ a);
                                     // a = a + '.711-02:00';
                                     //a = a + '.000-00:00';
@@ -639,12 +641,13 @@ public with sharing class updateFieldsController {
                                     //String data = a;
                                     //System.debug('data of all 639====>' + data);
                                    // Datetime dt = (DateTime)JSON.deserialize('"' + (addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00') + '"', DateTime.class);
-                                     sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + (addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00') + '"', DateTime.class)); 
+                                   
+                                     sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + ((addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00') + '"', DateTime.class)); 
                                     //  sobj.put(field.SObjectField, DateTime.parse(addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim())); 
                                 } catch (Exception e) {
                                     System.debug('Error message for date/time ' + e.getMessage());
                                 }
-                               
+                               // jenish gangani update datetime field
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
@@ -699,6 +702,13 @@ public with sharing class updateFieldsController {
                                 }
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
+                                // jenishgangani 15/02 insert datetime field
+                                try {
+                                     sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + ((addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00') + '"', DateTime.class)); 
+                                } catch (Exception e) {
+                                     System.debug('Error for date/Time '+ e.getMessage());
+                                }
+                                // jenishgangani 15/02 insert datetime field
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
