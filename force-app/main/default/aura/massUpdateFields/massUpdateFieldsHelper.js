@@ -296,12 +296,18 @@
         });
         action.setCallback(this, function (response) {
             var result = response.getState();
+            console.log('result :::::' + result)
             if (result == 'SUCCESS') {
                 var res = response.getReturnValue();
-                console.log('res::::' + JSON.stringify(res));
-                component.set("v.updateFieldList", res);
+                if (res.startsWith("Error")) {
+                    helper.showToast(component, "Error", "Failed!", + res);
+                } else {
+                    // console.log('check the typeof:::;'+ typeof())
+                    console.log('res::::' + JSON.stringify(res));
+                    component.set("v.updateFieldList", res);
+                }
             } else {
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong setSobject");
+                helper.showToast(component, "Error", "Failed!", + 'Error accur, Something went wrong setSobject');
             }
             component.set("v.IsSpinner", false);
         });
@@ -320,6 +326,7 @@
         });
         action.setCallback(this, function (response) {
             var result = response.getState();
+
             if (result == 'SUCCESS') {
                 var res = response.getReturnValue();
                 console.log('resfor insert::::' + JSON.stringify(res));
