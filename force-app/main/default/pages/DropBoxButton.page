@@ -1,0 +1,55 @@
+<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true">
+    <html>
+
+    <head>
+        <title>Dropbox Chooser Playground</title>
+        <script src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="7anturvlx116i1g"></script>
+    </head>
+
+    <body>
+        <button onclick="choose();" type="button">Choose</button>
+        <script>
+            var choose = (function () {
+                var options = {
+                    success: function (files) {
+                        console.log(files[0].id);
+                        // alert(files[0].id);
+                        var a = files[0].id;
+                        var ACCESS_TOKEN = "sl.BY6YW0sLlTru2W3fAA6JJzp1zoZ8dk5Z5bdF_TVQQ8UTWFbcoZE0cjSZb9xaPMC60V2ES9JKnxDnHaOmtkKnhaVYUurSPlfmiLpD6wFY9BGViHkHJY0Z8aGDGsUujybln1lD6RrngPg";
+                        var xhr = new XMLHttpRequest();
+                        var dropboxApiArg = JSON.stringify({ "path": a });
+
+
+                        xhr.open("POST", "https://content.dropboxapi.com/2/files/download");
+                        xhr.setRequestHeader("Authorization", "Bearer " + ACCESS_TOKEN);
+                        xhr.setRequestHeader("Dropbox-API-Arg", dropboxApiArg);
+                        xhr.responseType = "text";
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                var fileData = xhr.responseText;
+                                console.log('type of the :::' + typeof (fileData));
+                                console.log("Downloaded file data:", fileData);
+                            }
+                            else if (xhr.readyState === 4) {
+                                console.error("Error downloading file from Dropbox:", xhr.responseText);
+                            }
+                        };
+                        xhr.send();
+                    },
+                    cancel: function () {
+                        console.log("cancelled");
+                    },
+                    linkType: "direct",
+                    extensions: [".csv"],
+                };
+
+                return function () {
+                    Dropbox.choose(options);
+                };
+            })();
+
+        </script>
+    </body>
+
+    </html>
+</apex:page>
