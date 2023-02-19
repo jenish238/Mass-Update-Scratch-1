@@ -229,6 +229,8 @@
             component.set("v.finished", true);
         }
     },
+
+    // jenish gangani 11/02
     saveRecordsToSFForInsert: function (component, event, helper) {
         var selectedStep = event.getSource().get("v.value");
         var nextStep = selectedStep == 'Step3' ? 'finished' : 'finished';
@@ -239,6 +241,7 @@
             component.set("v.finished", true);
         }
     },
+    // jenish gangani 11/02
 
     nextPageRecord: function (component, event, helper) {
         var pageNumber = component.get('v.pageNumber');

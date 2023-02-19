@@ -15,6 +15,16 @@
      <ltng:require 
     scripts="{!$Resource.gapifile  + '/api.js'}"
     afterScriptsLoaded="{!c.scriptsLoaded}" />
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="isLoading" type="Boolean"/>
+
+    <div>
+        <lightning:button label="Select file from Dropbox" onclick="{!c.selectFile}" />
+        <aura:if isTrue="{!v.isLoading}">
+            <lightning:spinner variant="brand" size="medium" />
+        </aura:if>
+        <lightning:datatable data="{!v.data}" />
+    </div>
 
    <!-- jenish gangani 9/2/23 event  -->
 
@@ -28,7 +38,9 @@
                          label="Please upload file"
                          multiple="false"/>
 
-        <lightning:button label="Select a file from Google Drive" onclick="{!c.redirectToDrive}" />
+        <!--<lightning:button label="Select a file from Google Drive" onclick="{!c.redirectToDrive}" />-->
+        <iframe src="{!'https://power-drive-2498-dev-ed--c.scratch.vf.force.com/apex/testPage'}" width="100%" height="300px;" frameBorder="0"/>
+        <iframe src="/apex/DropBoxButton" height="30px" width="30px" class="logo" frameBorder="0" style="border-radius: 10px;"></iframe>
 
         <!-- <lightning:fileUpload aura:id = "file"
                         onuploadfinished="{!c.showcsvdata}"

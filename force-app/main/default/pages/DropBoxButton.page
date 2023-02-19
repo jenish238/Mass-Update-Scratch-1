@@ -1,0 +1,74 @@
+<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true">
+    <html>
+
+    <head>
+        <title>Dropbox Chooser Playground</title>
+        <script src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="7anturvlx116i1g"></script>
+
+    </head>
+
+    <body onload="refreshToken()">
+        <apex:image url="{!$Resource.dropbox}" onclick="choose();" height="28px" width="30px" style="border:none;" />
+        <script>
+            var accessToken;
+            function refreshToken() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://api.dropboxapi.com/oauth2/token");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onload = function() {
+                var response = JSON.parse(xhr.responseText);
+                console.log("New access token generated:", response.access_token);
+                accessToken = response.access_token;
+                // return accessToken;
+            };
+            var r ='x5Rn8klCtnkAAAAAAAAAAc6LPsJUVH0c1DWu6beyTBX2UA4k6HFmT3iGGNyVkOdH'
+            xhr.send("grant_type=refresh_token&refresh_token=" + r + "&client_id=" + encodeURIComponent('7anturvlx116i1g') + "&client_secret=" + encodeURIComponent('rr6oujfitv66sxj'));
+        }
+            var choose = (function () {
+                var options = {
+                    success: function (files) {
+                        console.log(files);
+                        console.log(files[0].id);
+                        var a = files[0].id;
+                        debugger
+                        // var ACCESS_TOKEN = refreshToken();
+                        var xhr = new XMLHttpRequest();
+                        var dropboxApiArg = JSON.stringify({ "path": a });
+
+                        xhr.open("POST", "https://content.dropboxapi.com/2/files/download");
+                        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+                        xhr.setRequestHeader("Dropbox-API-Arg", dropboxApiArg);
+                        xhr.responseType = "text";
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                var fileData = xhr.responseText;
+                                console.log('type of the :::' + typeof (fileData));
+                                console.log("Downloaded file data:", fileData);
+
+                                // Display the file contents in the UI
+                         
+                            }
+                            else if (xhr.readyState === 4) {
+                                console.error("Error downloading file from Dropbox:", xhr.responseText);
+                            }
+                        };
+                        xhr.send();
+                    },
+                    cancel: function () {
+                        console.log("cancelled");
+                    },
+                    linkType: "direct",
+                    extensions: [".csv"],
+                };
+
+                return function () {
+                    Dropbox.choose(options);
+                };
+            })();
+
+        
+        </script>
+    </body>
+
+    </html>
+</apex:page>

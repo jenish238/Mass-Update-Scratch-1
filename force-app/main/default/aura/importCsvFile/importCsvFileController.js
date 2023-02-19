@@ -12,6 +12,7 @@
             var fName = event.getSource().get("v.files")[0]["name"];
         }
 
+
         if (fName.indexOf(".csv") !== -1) {
             console.log("fileName=====" + fileName);
 
@@ -261,6 +262,35 @@
 
     scriptsLoaded: function (cmp, evetn, helper) {
         console.log('script loadeed ');
+    },
+    selectFile: function (cmp) {
+        cmp.set("v.isLoading", true);
+
+        var accessToken = 'sl.BYyjccBtFESoSVyMUfog8FBQP8ACUmhj9hxysPMaPD-33XIZv1KoXbW7RuMHwnlJoKo9m3FH-0YyyTYse8ZbeB7Np_gbWytJy5eAYrX3-TL1WQr1iG7TY-xUNRgxANGilSKSxMYTNMw';
+        var filePath = '/path/to/csv/file.csv';
+
+        axios.get('https://api.dropboxapi.com/2/files/download', {
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Dropbox-API-Arg': JSON.stringify({ path: filePath })
+            },
+            responseType: 'text'
+        })
+            .then(function (response) {
+                var contents = response.data;
+                var rows = contents.split("\n");
+                var data = [];
+                for (var i = 0; i < rows.length; i++) {
+                    data.push(rows[i].split(","));
+                }
+                cmp.set("v.data", data);
+            })
+            .catch(function (error) {
+                console.error(error);
+            })
+            .finally(function () {
+                cmp.set("v.isLoading", false);
+            });
     }
 
 });
