@@ -1,0 +1,39 @@
+<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true">
+    <html>
+
+    <head>
+        <title>Dropbox Chooser Demo</title>
+        <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="7anturvlx116i1g"></script>
+        <script type="text/javascript">
+            function chooseFile() {
+                Dropbox.choose({
+                    success: function (files) {
+                        // Get the selected file data
+                        console.log('file===>' + JSON.stringify(files));
+                        var fileUrl = files[0].link;
+                        fetch(fileUrl)
+                            .then(response => response.text())
+                            .then(data => {
+                                // Handle the file data
+                                console.log(data);
+                            })
+                            .catch(error => {
+                                // An error occurred while getting the file data
+                                console.error(error);
+                            });
+                    },
+                    linkType: "direct",
+                    multiselect: false,
+                    extensions: [".xlsx", ".csv", ".xls"]
+                });
+            }
+        </script>
+    </head>
+
+    <body>
+        <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none;" />
+    </body>
+
+    </html>
+
+</apex:page>

@@ -38,7 +38,9 @@
                          label="Please upload file"
                          multiple="false"/>
 
-        <lightning:button label="Select a file from Google Drive" onclick="{!c.redirectToDrive}" />
+        <!--<lightning:button label="Select a file from Google Drive" onclick="{!c.redirectToDrive}" />-->
+        <iframe src="/apex/testPage" width="100%" height="300px;" frameBorder="0"/>
+        <iframe src="/apex/DropBoxButton" height="30px" width="30px" class="logo" frameBorder="0" style="border-radius: 10px;"></iframe>
 
         <!-- <lightning:fileUpload aura:id = "file"
                         onuploadfinished="{!c.showcsvdata}"

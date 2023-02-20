@@ -599,6 +599,7 @@ public with sharing class updateFieldsController {
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(selectObjectName).getDescribe().fields.getMap();
         
         Schema.SObjectType sobj1 = Schema.getGlobalDescribe().get(selectObjectName);
+        System.debug('allData from :::'+ allData);
         
         for(Map<String,String> addMap : allData.values()){
             SObject sobj = sobj1.newSObject();
@@ -615,12 +616,17 @@ public with sharing class updateFieldsController {
                                 sobj.put(field.SObjectField, Decimal.valueof(addMap.get('CSV'+field.csvfield).trim()));
                             }
                             else if(fielddataType == Schema.DisplayType.DATE){
-                                try{
+                                try{ 
                                     System.debug('619==>date filed ===>'+ addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim());
                                     System.debug('620==>date filed ===>'+ addMap.get('CSV'+field.csvfield).trim());
-                                    sobj.put(field.SObjectField, date.parse(addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()));      
+                                    sobj.put(field.SObjectField, date.parse(addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()));  
+                                    // string w =  (addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()) ;
+                                    // System.debug('w== 623==>'+ w);
+                                    // sobj.put(field.SObjectField, w);      
+ 
                                 }catch(Exception e){
-                                    System.debug('Error ' + e.getMessage());
+                                    System.debug('Error for Date ' + e.getMessage());
+                                    return 'Error '+e.getMessage();
                                 }
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
@@ -630,11 +636,7 @@ public with sharing class updateFieldsController {
                                 try {
                                     // sobj.put(field.SObjectField, addMap.get('CSV'+field.csvfield).trim());
                                    // String a = addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00';
-
                                 //  String a = (addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00';
-
-
-
                                     //System.debug('a::::'+ a);
                                     // a = a + '.711-02:00';
                                     //a = a + '.000-00:00';
@@ -645,11 +647,16 @@ public with sharing class updateFieldsController {
                                     //String data = a;
                                     //System.debug('data of all 639====>' + data);
                                    // Datetime dt = (DateTime)JSON.deserialize('"' + (addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00') + '"', DateTime.class);
-                                   
+                                //    String isoTimestamp = '2023-02-12T05:20:52.000Z';
+                                //    String isoTimestamp = addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim();
+                                //    String timestampWithoutFraction = isoTimestamp.substring(0, 19);
+
+                                  
                                      sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + ((addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00') + '"', DateTime.class)); 
                                     //  sobj.put(field.SObjectField, DateTime.parse(addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim())); 
                                 } catch (Exception e) {
                                     System.debug('Error message for date/time ' + e.getMessage());
+                                    return 'Error ' + e.getMessage();
                                 }
                                // jenish gangani update datetime field
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
@@ -801,7 +808,6 @@ public with sharing class updateFieldsController {
 public class pairWrapper1{
         @AuraEnabled public List<string> apiNameList{get; set;}
         @AuraEnabled public List<pairWrapper> pairWrapperList{get; set;}
-
     }
     // -----------jenish gangani
 
