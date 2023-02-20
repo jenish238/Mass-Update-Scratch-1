@@ -8,6 +8,7 @@ import sheetjs from '@salesforce/resourceUrl/sheetjsNew';
 export default class new_upload_btn extends LightningElement {
     @api myRecordId;
     parserInitialized = false;
+    progress = 0;
 
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
@@ -39,36 +40,24 @@ export default class new_upload_btn extends LightningElement {
         // Get the list of uploaded files
         try {
             if (event.detail.files.length > 0) {
+
+                for (var j = 0; j <= 100; j++) {
+                    task(j);
+                }
+                function task(j) {
+                    setTimeout(function () {
+                        component.set("v.progress", j);
+                    }, 2 * j);
+                }
+                
                 const file = event.detail.files[0];
                 var fileName = file.name;
                 fileName = fileName.split('.').pop();
 
                 if (fileName === 'csv') {
-                    this.loading = true;
-                    Papa.parse(file, {
-                        quoteChar: '"',
-                        header: 'true',
-                        complete: (results) => {
-                            this._rows = results.data;
-                            this.loading = false;
-                            let rowObj = results.data;
-                            const headerName = Object.keys(rowObj[0]);
-                            const newArr = rowObj.flatMap(obj => Object.values(obj));
-                            newArr.unshift(...headerName);
-                            let jsonObj = JSON.stringify(newArr);
-                            jsonObj = jsonObj.replace(/\[/g, '').replace(/"/g, '');
-                            console.log('Data: ', jsonObj);
-                        },
-                        error: (error) => {
-                            console.log('result --: ', { error });
-                            console.error(error);
-                            this.loading = false;
-                        }
-                    })
+                    this.CsvToJSON(file);
                 } else if (fileName === 'xls' || fileName === 'xlsx') {
-                    console.log('data --> ', event.detail.files[0]);
                     this.ExcelToJSON(file);
-                    console.log('*** fileName ==>', fileName);
                 }
             }
         } catch (error) {
@@ -108,5 +97,29 @@ export default class new_upload_btn extends LightningElement {
         } catch (error) {
             console.log('error except ', error);
         }
+    }
+
+    CsvToJSON(file){
+        this.loading = true;
+        Papa.parse(file, {
+            quoteChar: '"',
+            header: 'true',
+            complete: (results) => {
+                this._rows = results.data;
+                this.loading = false;
+                let rowObj = results.data;
+                const headerName = Object.keys(rowObj[0]);
+                const newArr = rowObj.flatMap(obj => Object.values(obj));
+                newArr.unshift(...headerName);
+                let jsonObj = JSON.stringify(newArr);
+                jsonObj = jsonObj.replace(/\[/g, '').replace(/"/g, '');
+                console.log('Data: ', jsonObj);
+            },
+            error: (error) => {
+                console.log('result --: ', { error });
+                console.error(error);
+                this.loading = false;
+            }
+        })
     }
 }
