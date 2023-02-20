@@ -1,0 +1,8 @@
+<template>
+    <lightning-card variant="Narrow" title="Upload CSV here" icon-name="standard:account">
+        <div class="slds-p-horizontal_small">
+            <lightning-input type="file" multiple="false" label="CSV file" accept={acceptedFormats}
+                onchange={handleUploadFinished}></lightning-input>
+        </div>
+    </lightning-card>
+</template>
