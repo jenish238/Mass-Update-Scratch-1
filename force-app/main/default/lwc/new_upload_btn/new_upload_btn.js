@@ -1,14 +1,15 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import PARSER from '@salesforce/resourceUrl/PapaParse';
 import sheetjs from '@salesforce/resourceUrl/sheetjsNew';
-
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 
 export default class new_upload_btn extends LightningElement {
     @api myRecordId;
     parserInitialized = false;
-    progress = 0;
+    @track progress = 0;
+    @track fileName = 'No Files Selected..';
 
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
@@ -40,28 +41,63 @@ export default class new_upload_btn extends LightningElement {
         // Get the list of uploaded files
         try {
             if (event.detail.files.length > 0) {
-
-                for (var j = 0; j <= 100; j++) {
-                    task(j);
-                }
-                function task(j) {
-                    setTimeout(function () {
-                        component.set("v.progress", j);
-                    }, 2 * j);
-                }
-                
                 const file = event.detail.files[0];
-                var fileName = file.name;
-                fileName = fileName.split('.').pop();
+                this.fileName = file.name;
+                this.progress = 0;
+                let disableNext = false;
 
-                if (fileName === 'csv') {
-                    this.CsvToJSON(file);
-                } else if (fileName === 'xls' || fileName === 'xlsx') {
-                    this.ExcelToJSON(file);
+                if (file.size > 400000) {
+                    disableNext = true;
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'File is too Large',
+                            message: 'Please upload smaller file',
+                            variant: 'Info',
+                        }),
+                    );
+                }else{
+                    //*    for progress bar start
+                    let progress = 0;
+                    const animate = () => {
+                        progress += 5;
+                        if (progress <= 100) {
+                            this.progress = progress;
+                            requestAnimationFrame(animate);
+                        }
+                    };
+                    requestAnimationFrame(animate);
+                    //*    for progress bar end
+
+                    let extension = this.fileName.split('.').pop();
+    
+                    if (extension === 'csv') {
+                        this.CsvToJSON(file);
+                    } else if (extension === 'xls' || extension === 'xlsx') {
+                        this.ExcelToJSON(file);
+                    } else {
+                        const toastEvent = new ShowToastEvent({
+                            title: 'Unsupported file type',
+                            message: 'Please upload a CSV, XLS, or XLSX file',
+                            variant: 'info'
+                        });
+                        this.dispatchEvent(toastEvent);
+                        return;
+                    }
                 }
+
+                event.preventDefault();
+                const selectEvent = new CustomEvent('disablenextbutton', {
+                    detail: { disableNext }
+                });
+                this.dispatchEvent(selectEvent);
             }
         } catch (error) {
-            console.log('error log --> ', error);
+            const toastEvent = new ShowToastEvent({
+                title: 'Error',
+                message: error.message,
+                variant: 'error'
+            });
+            this.dispatchEvent(toastEvent);
         }
     }
 
