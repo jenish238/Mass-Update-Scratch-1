@@ -177,7 +177,7 @@
                             </aura:if>
                         </div>
                         <div class="slds-p-around_medium" style="width:70%;margin-left:15%;">
-
+                            
                             <!-- jenish gangani 8/2/23 -->
                             <div class="slds-float_right slds-col">
                                 <lightning:helptext content="Select your Operation."/>
@@ -189,6 +189,10 @@
                                         <option value="update">update</option>
                                         </lightning:select>
                                     <br/>
+
+                            <!--* Nishit Suthar 20/02/23 : Added new LWC Component -->
+                            <c:new_upload_btn />
+                            
                              <!-- jenish gangani 8/2/23  -->
                             <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
                             <!-- <lightning:fileUpload aura:id = "file"
@@ -197,7 +201,7 @@
                                     accept = ".csv"
                                     label = "Please upload file"
                                     multiple = "false" /> -->
-                                        
+                                 
                             <br/>
                             
                             <div class="slds-float_right slds-col">
