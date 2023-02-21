@@ -1,0 +1,9 @@
+<template>
+    <div>
+        <lightning-input type="file" multiple="false" label="Please upload file (LWC)" accept={acceptedFormats}
+            onchange={handleUploadFinished}></lightning-input>
+    </div>
+    <div class="slds-m-top_large">
+        <lightning-progress-bar value={progress} variant="circular"></lightning-progress-bar>
+    </div>
+</template>
