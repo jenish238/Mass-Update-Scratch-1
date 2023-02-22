@@ -115,8 +115,12 @@ export default class new_upload_btn extends LightningElement {
                 const sheetName = workbook.SheetNames[0];
                 let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
                 console.log('data==>' + JSON.stringify(rowObject));
+                var data1 = Papa.parse(rowObject, {
+                    header: true
+                });
+                console.log('data1 '+JSON.stringify(data1));
 
-                var headerValue = Object.keys(rowObject[0]);
+                /* var headerValue = Object.keys(rowObject[0]);
                 this.headerCheck(headerValue);
                 for (let i = 0; i < rowObject.length; i++) {
                     arr1.push(Object.values(rowObject[i]));
@@ -124,7 +128,7 @@ export default class new_upload_btn extends LightningElement {
                 this.tabledata = arr1;
                 let value = this.tabledata;
                 const event1 = new CustomEvent('tabledata', { detail: { value } });
-                this.dispatchEvent(event1);
+                this.dispatchEvent(event1); */
 
             };
 
