@@ -9,5 +9,12 @@
     onclick={handleSignOutClick}
     label="Sign Out"
   ></lightning-button> -->
-  <iframe height="400px" width="100%" src="/apex/testPage"></iframe>
+ <iframe id="vfFrame" src="/apex/TestVF" height="30px" width="20%" style="border:hidden;"></iframe>
+
+  <template if:true={receivedMessage}>
+      <p> Message Received from VF = </p>
+      <div class="slds-box">
+          <lightning-formatted-text value={receivedMessage}></lightning-formatted-text>
+      </div>
+  </template>
 </template>

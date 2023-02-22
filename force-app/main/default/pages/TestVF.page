@@ -1,43 +1,83 @@
-<apex:page sidebar="false" showHeader="false">
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script>
-      /**
-       * Sample JavaScript code for drive.files.list
-       * See instructions for running APIs Explorer code samples locally:
-       * https://developers.google.com/explorer-help/code-samples#javascript
-       */
+<apex:page sidebar="false" showHeader="false" >
     
-      function authenticate() {
-        return gapi.auth2.getAuthInstance()
-            .signIn({scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly"})
-            .then(function() { console.log("Sign-in successful"); },
-                  function(err) { console.error("Error signing in", err); });
-      }
-    
-    
-      
-      function loadClient() {
-        gapi.client.setApiKey("AIzaSyDYiocNeen_vyPPA8Au3gnPdrhpcxupQlM");
-        return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
-            .then(function() { console.log("GAPI client loaded for API"); },
-                  function(err) { console.error("Error loading GAPI client for API", err); });
-      }
-     
-    
-      // Make sure the client is loaded and sign-in is complete before calling this method.
-      function execute() {
-        return gapi.client.drive.files.list({})
-            .then(function(response) {
+    <html>
+        <body>
+            
+            <script src="https://apis.google.com/js/api.js"></script>
+            <script>
+                /**
+               * Sample JavaScript code for drive.files.list
+               * See instructions for running APIs Explorer code samples locally:
+               * https://developers.google.com/explorer-help/code-samples#javascript
+               */
+                
+           	function authenticate() {
+                return gapi.auth2.getAuthInstance()
+                .signIn({scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly"})
+                .then(function() { console.log("Sign-in successful"); },
+                      function(err) { console.error("Error signing in", err); });
+            }
+            
+            
+            function loadClient() {
+                gapi.client.setApiKey("AIzaSyDYiocNeen_vyPPA8Au3gnPdrhpcxupQlM");
+                return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
+                .then(function() { 
+                    console.log("GAPI client loaded for API"); 
+                	execute();
+                },
+                      function(err) { console.error("Error loading GAPI client for API", err); });
+            }
+            
+            
+            
+            // Make sure the client is loaded and sign-in is complete before calling this method.
+            var resFiles = '';
+            function execute() {
+                return gapi.client.drive.files.list({q: "mimeType='text/csv'"})
+                .then(function(response) {
                     // Handle the results here (response.result has the parsed body).
                     console.log("Response", response);
-                  },
-                  function(err) { console.error("Execute error", err); });
-      }
-      gapi.load("client:auth2", function() {
-        gapi.auth2.init({client_id: "816521585707-lvdkgvro4cmi69rnuu2308p7hkbqoeg4.apps.googleusercontent.com"});
-      });
-    </script>
-    <button onclick="authenticate().then(loadClient)">authorize and load</button>
-    <button onclick="execute()">execute</button>
-
+					
+                    resFiles = response;
+                   
+                    
+                },
+                function(err) { console.error("Execute error", err); });
+                //sendToLWC(resFiles);
+                
+                
+            }
+            gapi.load("client:auth2", function() {
+                gapi.auth2.init({client_id: "816521585707-lvdkgvro4cmi69rnuu2308p7hkbqoeg4.apps.googleusercontent.com",plugin_name: "hello"});
+            });
+            
+            
+            
+            
+            console.log('resFiles--',resFiles);
+            //var lexOrigin="https://power-drive-2498-dev-ed--c.scratch.vf.force.com";
+            var lexOrigin="https://power-drive-2498-dev-ed.scratch.lightning.force.com";
+            function sendToLWC() {
+                var payload =  'test Passing Data';
+                var message = {
+                    name:"SampleVFToLWCMessage",
+                    payload:payload
+                };
+                parent.postMessage(message,lexOrigin);
+             }
+            </script>
+            
+            
+            
+           
+            <button onclick="authenticate().then(loadClient())">Google Drive</button>
+			<button onclick="sendToLWC()">sendToLWC</button>
+			
+           
+        </body>
+        
+    </html>
+    
+    
 </apex:page>
