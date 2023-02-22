@@ -12,6 +12,7 @@
             var fName = event.getSource().get("v.files")[0]["name"];
         }
 
+
         if (fName.indexOf(".csv") !== -1) {
             console.log("fileName=====" + fileName);
 
