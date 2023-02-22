@@ -115,7 +115,7 @@ export default class new_upload_btn extends LightningElement {
                 const flattenedArr = rowObject.flatMap(obj => Object.values(obj));
                 flattenedArr.unshift(...keys);
                 let jsonObject = JSON.stringify(flattenedArr);
-                jsonObject = jsonObject.replace(/\[/g, '').replace(/"/g, '');
+                jsonObject = jsonObject.replace(/\[/g, '').replace(/\]/g, '').replace(/"/g, '');
                 console.log('Data: ', jsonObject);
             };
 
@@ -148,7 +148,7 @@ export default class new_upload_btn extends LightningElement {
                 const newArr = rowObj.flatMap(obj => Object.values(obj));
                 newArr.unshift(...headerName);
                 let jsonObj = JSON.stringify(newArr);
-                jsonObj = jsonObj.replace(/\[/g, '').replace(/"/g, '');
+                jsonObj = jsonObj.replace(/\[/g, '').replace(/\]/g, '').replace(/"/g, '');
                 console.log('Data: ', jsonObj);
             },
             error: (error) => {
