@@ -61,6 +61,11 @@
     <aura:handler name="disableNextButton" event="c:disableButtonEvent" action="{!c.handleNextButton}" />
           <!-- jenish gangani 7/2/23 -->
 
+          <!-- jenish gangani 22/2 -->
+          <aura:attribute name="lwcValue" type="String"/>
+
+          <!-- jenish gangani 22/2 -->
+
     
     <aura:if isTrue="{!v.finished == false}">
         <div>
@@ -191,10 +196,10 @@
                                     <br/>
 
                             <!--* Nishit Suthar 20/02/23 : Added new LWC Component -->
-                            <c:new_upload_btn ondisablenextbutton="{!c.handleNextButton}"/>
+                            <c:new_upload_btn onpassvalue="{!c.handleNextButton}" onheader="{!c.handleHeader}" ontabledata="{!c.handleTableData}"/>
                             
                              <!-- jenish gangani 8/2/23  -->
-                            <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/>
+                            <!-- <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/> -->
                             <!-- <lightning:fileUpload aura:id = "file"
                                     onuploadfinished="{!c.showcsvdata}"
                                     name = "file"
