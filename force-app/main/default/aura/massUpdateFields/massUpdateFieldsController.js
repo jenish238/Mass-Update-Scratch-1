@@ -270,10 +270,9 @@
 
     //* jenish gangani 7/2/23
 
-    
+
     handleNextButton: function (component, event, helper) {
-        console.log('header data==>' + event.getParam('value'));
-        // const value = event.detail;
+        console.log('nextButton==>' + event.getParam('value'));
         component.set("v.stepOneNextButton", event.getParam('value'));
     },
     handleHeader: function (component, event, helper) {
@@ -283,6 +282,7 @@
     handleTableData: function (component, event, helper) {
         console.log('tabledata data==>' + event.getParam('value'));
         component.set("v.tabledata", event.getParam('value'));
+        console.log('data of table ==>' + component.get(v.tabledata));
     }
 
 })
