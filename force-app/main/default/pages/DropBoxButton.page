@@ -10,12 +10,29 @@
                     success: function (files) {
                         // Get the selected file data
                         console.log('file===>' + JSON.stringify(files));
+                        var nameFile = files[0].name;
+                        console.log('name'+ nameFile);
                         var fileUrl = files[0].link;
                         fetch(fileUrl)
                             .then(response => response.text())
                             .then(data => {
                                 // Handle the file data
                                 console.log(data);
+                                var a = data;
+                                var lexOrigin ='https://power-drive-2498-dev-ed.scratch.lightning.force.com'
+                                sendData();
+                                function sendData(){
+                                    console.log(a);
+                                    var payload = a; 
+                                  
+                                }
+                                var message ={
+                                    name:"new_upload_btn",
+                                    finame:nameFile,
+                                    payload:a
+                                };
+                                console.log('message::'+JSON.stringify(message));
+                                parent.postMessage(message,lexOrigin)
                             })
                             .catch(error => {
                                 // An error occurred while getting the file data

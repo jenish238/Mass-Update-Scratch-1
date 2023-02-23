@@ -269,6 +269,8 @@
     },
 
     //* jenish gangani 7/2/23
+
+    
     handleNextButton: function (component, event, helper) {
         console.log('header data==>' + event.getParam('value'));
         // const value = event.detail;
