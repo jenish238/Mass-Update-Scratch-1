@@ -40,11 +40,12 @@
                     console.log("Response", response);
 					
                     resFiles = response;
-                   
+                   	console.log(typeof resFiles );
+                    sendToLWC(resFiles);
                     
                 },
                 function(err) { console.error("Execute error", err); });
-                //sendToLWC(resFiles);
+                
                 
                 
             }
@@ -58,8 +59,10 @@
             console.log('resFiles--',resFiles);
             //var lexOrigin="https://power-drive-2498-dev-ed--c.scratch.vf.force.com";
             var lexOrigin="https://power-drive-2498-dev-ed.scratch.lightning.force.com";
-            function sendToLWC() {
-                var payload =  'test Passing Data';
+            function sendToLWC(resFiles) {
+                console.log('sendToLWC==', resFiles.result);
+                console.log('sendToLWC==', resFiles.result.files);
+                var payload =  resFiles.result.files;
                 var message = {
                     name:"SampleVFToLWCMessage",
                     payload:payload
@@ -72,7 +75,7 @@
             
            
             <button onclick="authenticate().then(loadClient())">Google Drive</button>
-			<button onclick="sendToLWC()">sendToLWC</button>
+            <!--x<button onclick="sendToLWC()">sendToLWC</button>-->
 			
            
         </body>

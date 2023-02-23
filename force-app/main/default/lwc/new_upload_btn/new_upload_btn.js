@@ -12,9 +12,79 @@ export default class new_upload_btn extends LightningElement {
     parserInitialized = false;
     @track progress = 0;
     @track fileName = 'No Files Selected..';
+    @api myObject;
+
 
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
+    }
+    connectedCallback() {
+        var VfOrigin =
+            "https://power-drive-2498-dev-ed--c.scratch.vf.force.com";
+
+        window.addEventListener("message", (message) => {
+            if (message.origin !== VfOrigin) {
+                //Not the expected origin
+                return;
+            }
+
+            //handle the message
+            if (message.data.name === "new_upload_btn") {
+                let fileName = message.data.finame;
+                let extension = fileName.split('.').pop();
+                var arr3 = [];
+
+                if (extension == 'csv') {
+                    var dropboxData = message.data.payload;
+                    var data1 = Papa.parse(dropboxData, {
+                        header: true
+                    });
+                    var headerValue = data1.meta.fields;
+                    var rowData = data1.data;
+
+                    this.headerCheck(headerValue);
+                    console.log('header done');
+                    for (let i = 0; i < rowData.length; i++) {
+                        arr3.push(Object.values(rowData[i]));
+                    }
+                    this.tabledata = arr3;
+                    console.log('table data :-', this.tabledata);
+                    let value = this.tabledata;
+                    const event1 = new CustomEvent('tabledata', { detail: { value } });
+                    this.dispatchEvent(event1);
+
+                } else {
+                    console.log('xlsx');
+                    var dropboxData1 = message.data.payload;
+                    console.log('data noon ==>' + dropboxData1);
+
+                    const workbook = XLSX.read(dropboxData1, { type: 'binary' });
+                    console.log('workBook==>' + workbook);
+                    const sheetName = workbook.SheetNames[0];
+                    console.log('sheetName==>' + sheetName);
+                    let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
+                    console.log('data==>' + JSON.stringify(rowObject));
+                    var data1 = Papa.parse(rowObject, {
+                        header: true
+                    });
+                    console.log('data1 ' + JSON.stringify(data1));
+
+                    // var headerValue = Object.keys(rowObject[0]);
+                    var headerValue = data1.meta.fields;
+                    var rowData = data1.data;
+
+                    this.headerCheck(headerValue);
+                    for (let i = 0; i < rowData.length; i++) {
+                        arr3.push(Object.values(rowData[i]));
+                    }
+                    this.tabledata = arr3;
+                    let value = this.tabledata;
+                    const event1 = new CustomEvent('tabledata', { detail: { value } });
+                    this.dispatchEvent(event1);
+
+                }
+            }
+        });
     }
 
     renderedCallback() {
@@ -44,7 +114,7 @@ export default class new_upload_btn extends LightningElement {
         try {
             if (event.detail.files.length > 0) {
                 const file = event.detail.files[0];
-                console.log('filesss' + file);
+                console.log('filesss' + JSON.stringify(file));
                 this.fileName = file.name;
                 this.progress = 0;
                 let disableNext = false;
@@ -110,7 +180,7 @@ export default class new_upload_btn extends LightningElement {
             reader.onload = (event) => {
                 var arr1 = [];
                 const data = event.target.result;
-                // console.log('data==>' + JSON.stringify(data));
+                console.log('data==>' + JSON.stringify(data));
                 const workbook = XLSX.read(data, { type: 'binary' });
                 const sheetName = workbook.SheetNames[0];
                 let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
@@ -118,17 +188,20 @@ export default class new_upload_btn extends LightningElement {
                 var data1 = Papa.parse(rowObject, {
                     header: true
                 });
-                console.log('data1 '+JSON.stringify(data1));
+                console.log('data1 ' + JSON.stringify(data1));
 
-                /* var headerValue = Object.keys(rowObject[0]);
+                // var headerValue = Object.keys(rowObject[0]);
+                var headerValue = data1.meta.fields;
+                var rowData = data1.data;
+
                 this.headerCheck(headerValue);
-                for (let i = 0; i < rowObject.length; i++) {
-                    arr1.push(Object.values(rowObject[i]));
+                for (let i = 0; i < rowData.length; i++) {
+                    arr1.push(Object.values(rowData[i]));
                 }
                 this.tabledata = arr1;
                 let value = this.tabledata;
                 const event1 = new CustomEvent('tabledata', { detail: { value } });
-                this.dispatchEvent(event1); */
+                this.dispatchEvent(event1);
 
             };
 
@@ -160,9 +233,9 @@ export default class new_upload_btn extends LightningElement {
                 this.loading = false;
                 let rowObj = results.data;
                 console.log('rowobjec==>' + JSON.stringify(rowObj));
-                let a = results.meta.fields;
-                console.log('a==>' + JSON.stringify(a));
-                const headerName = Object.keys(rowObj[0]);
+                let headerName = results.meta.fields;
+                // console.log('a==>' + JSON.stringify(headerName));
+                // const headerName = Object.keys(rowObj[0]);
                 this.headerCheck(headerName);
                 for (let i = 0; i < rowObj.length; i++) {
                     arr2.push(Object.values(rowObj[i]));
@@ -173,8 +246,6 @@ export default class new_upload_btn extends LightningElement {
                 const event = new CustomEvent('tabledata', { detail: { value } });
                 this.dispatchEvent(event);
 
-                console.log('header Name typeOF' + typeof (headerName));
-                console.log('header Name ' + headerName);
 
             },
             error: (error) => {

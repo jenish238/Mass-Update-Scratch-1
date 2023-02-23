@@ -2,7 +2,7 @@ import { LightningElement ,api,track} from 'lwc';
 export default class GoogleFilePickerComponent extends LightningElement {
 
     receivedMessage = '';
-   
+     @track isShowModal = false;
     
     connectedCallback() {
         console.log('connectedCallback called ');
@@ -20,15 +20,25 @@ export default class GoogleFilePickerComponent extends LightningElement {
 
             //handle the message
             console.log('message 2===',message);
-            console.log('message 11===',message.data);
+            console.log('message 11===',message.data.payload);
             console.log('message===',message.data.name);
             if (message.data.name === "SampleVFToLWCMessage") {
+                console.log('message equals');
                 this.receivedMessage = message.data.payload;
+                this.isShowModal = true;
             }
         });
     }
     
-    
+  
+
+    showModalBox() {  
+        this.isShowModal = true;
+    }
+
+    hideModalBox() {  
+        this.isShowModal = false;
+    }
     // receivedMessage(payload) {
     //     console.log('handleVFData called==');
     //     // Process the data received from VF
