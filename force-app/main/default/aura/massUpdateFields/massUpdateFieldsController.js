@@ -282,6 +282,7 @@
     handleTableData: function (component, event, helper) {
         console.log('tabledata data==>' + event.getParam('value'));
         component.set("v.tabledata", event.getParam('value'));
+        console.log('data of table ==>' + component.get(v.tabledata));
     }
 
 })

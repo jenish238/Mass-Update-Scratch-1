@@ -12,11 +12,6 @@
  <iframe id="vfFrame" src="/apex/TestVF" height="30px" width="20%" style="border:hidden;"></iframe>
 
   <template if:true={receivedMessage}>
-      <p> Message Received from VF = </p>
-      {receivedMessage}
-      
-
-
        <!-- modal start -->      
       <template if:true={isShowModal}>
 
@@ -36,17 +31,83 @@
                       size="small" ></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
-                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Welcome in Apex Hours</h2>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select a File</h2>
               </header>
           
               <!-- modal body start -->
               <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                    <p>Modal/Popup in Lightning Web Component (LWC) Demo</p>
+                <!-- search text box  -->
+                <!-- <lightning-layout-item size="4" padding="around-small">
+                  
+                  <lightning-input type="text" label="Search here.."
+                      value={searchKey} 
+                      onchange={handelSearchKey}> 
+                  </lightning-input>
+                </lightning-layout-item >
+
+                <lightning-layout-item size="2" padding="around-small">
+                  
+                  <lightning-button label="Search" variant="brand" onclick={searchFile}>
+
+                  </lightning-button>
+                </lightning-layout-item> -->
+
+
+
+                <!-- <p>Modal/Popup in Lightning Web Component (LWC) Demo</p> -->
+                <!-- <lightning-datatable
+                      key-field="id"
+                      columns={columns}
+                      data={receivedMessage}
+                      
+                      onclick={select}
+                      >
+                      
+                </lightning-datatable> -->
+
+                <lightning-datatable
+                  key-field="id"
+                  data={receivedMessage}
+                  columns={columns}>
+                  <!-- onclick={getSelectedRec} > -->
+                </lightning-datatable>
+
+                <!-- <div class="container">
+                
+                  <table class="rwd-table">
+                    <tbody>
+                        <tr >
+                          <template for:each={columns} for:item="col">
+                              <th key={col}>{col.label}</th>
+                              
+                          </template>
+                        </tr>
+                      <template for:each={receivedMessage} for:item="row">
+                        <tr key={row}>
+                          <td data-th="Supplier Code">{row.name}</td>
+                          <td data-th="Supplier Code"></td>
+                          <td data-th="Supplier Code">{row.modifiedTime}</td>
+                        </tr>
+                      </template>
+                      
+                    </tbody>
+                  </table>
+                  
+                </div> -->
+
               </div>
 
               <!-- modal footer start-->
               <footer class="slds-modal__footer">
+                <!-- <button class="slds-button slds-button_neutral" >Select</button> -->
+                <lightning-button   variant="Neutral"
+                            label="Select"
+                            title="Select"
+                            onclick={getSelectedRec} 
+                            slot="actions"
+                            icon-name="utility:check"></lightning-button>
                 <button class="slds-button slds-button_neutral" onclick={hideModalBox}>Cancel</button>
+
               </footer>
           
           </div>

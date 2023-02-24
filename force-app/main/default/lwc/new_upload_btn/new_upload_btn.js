@@ -1,8 +1,10 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import PARSER from '@salesforce/resourceUrl/PapaParse';
 import sheetjs from '@salesforce/resourceUrl/sheetjsNew';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import getVFOrigin from '@salesforce/apex/URL_Controller.getVFOrigin';
+
 
 
 export default class new_upload_btn extends LightningElement {
@@ -12,79 +14,84 @@ export default class new_upload_btn extends LightningElement {
     parserInitialized = false;
     @track progress = 0;
     @track fileName = 'No Files Selected..';
-    @api myObject;
-
+    @api URL;
 
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
     }
+
     connectedCallback() {
-        var VfOrigin =
-            "https://power-drive-2498-dev-ed--c.scratch.vf.force.com";
+        console.log('connected call back');
+        getVFOrigin()
+            .then(result => {
+                // console.log('result==>' + result);                // console.log('url=->'+ this.URl);
+                const updatedUrl = result.replace(".my.salesforce.com", ".vf.force.com");
+                // console.log('update--->'+ updatedUrl);
+                const matchIndex = updatedUrl.indexOf("-ed");
+                // console.log('match dd'+ matchIndex);
+                var VfOrigin = updatedUrl.substring(0, matchIndex + 3) + "--c" + updatedUrl.substring(matchIndex + 3);
+                // console.log('vfOrigin--->', VfOrigin);
 
-        window.addEventListener("message", (message) => {
-            if (message.origin !== VfOrigin) {
-                //Not the expected origin
-                return;
-            }
-
-            //handle the message
-            if (message.data.name === "new_upload_btn") {
-                let fileName = message.data.finame;
-                let extension = fileName.split('.').pop();
-                var arr3 = [];
-
-                if (extension == 'csv') {
-                    var dropboxData = message.data.payload;
-                    var data1 = Papa.parse(dropboxData, {
-                        header: true
-                    });
-                    var headerValue = data1.meta.fields;
-                    var rowData = data1.data;
-
-                    this.headerCheck(headerValue);
-                    console.log('header done');
-                    for (let i = 0; i < rowData.length; i++) {
-                        arr3.push(Object.values(rowData[i]));
+                window.addEventListener("message", (message) => {
+                    if (message.origin !== VfOrigin) {
+                        //Not the expected origin
+                        return;
                     }
-                    this.tabledata = arr3;
-                    console.log('table data :-', this.tabledata);
-                    let value = this.tabledata;
-                    const event1 = new CustomEvent('tabledata', { detail: { value } });
-                    this.dispatchEvent(event1);
 
-                } else {
-                    console.log('xlsx');
-                    var dropboxData1 = message.data.payload;
-                    console.log('data noon ==>' + dropboxData1);
+                    //handle the message
+                    if (message.data.name === "new_upload_btn") {
+                        console.log('event');
+                        let fileName = message.data.finame;
+                        let extension = fileName.split('.').pop();
 
-                    const workbook = XLSX.read(dropboxData1, { type: 'binary' });
-                    console.log('workBook==>' + workbook);
-                    const sheetName = workbook.SheetNames[0];
-                    console.log('sheetName==>' + sheetName);
-                    let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
-                    console.log('data==>' + JSON.stringify(rowObject));
-                    var data1 = Papa.parse(rowObject, {
-                        header: true
-                    });
-                    console.log('data1 ' + JSON.stringify(data1));
+                        if (extension == 'csv') {
+                            console.log('csv');
+                            var dropboxData = message.data.payload;
+                            var data1 = Papa.parse(dropboxData, {
+                                header: true
+                            });
+                            var headerValue = data1.meta.fields;
+                            var rowData = data1.data;
 
-                    // var headerValue = Object.keys(rowObject[0]);
-                    var headerValue = data1.meta.fields;
-                    var rowData = data1.data;
-
-                    this.headerCheck(headerValue);
-                    for (let i = 0; i < rowData.length; i++) {
-                        arr3.push(Object.values(rowData[i]));
+                            this.headerCheck(headerValue);
+                            this.dataStoreTable(rowData);
+                        } else {
+                            console.log('xlsx');
+                            var dropboxData1 = message.data.payload;
+                            console.log('data noon ==>' + typeof (dropboxData1));
+                            var rowData = this.parseExcelFile(dropboxData1);
+                            console.log('rowdata==>' + rowData);
+                            this.dataStoreTable(rowData);
+                        }
                     }
-                    this.tabledata = arr3;
-                    let value = this.tabledata;
-                    const event1 = new CustomEvent('tabledata', { detail: { value } });
-                    this.dispatchEvent(event1);
+                });
 
-                }
-            }
-        });
+                // return result;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // console.log('url ' + window.location.origin);
+        // https://power-drive-2498-dev-ed.scratch.my.salesforce.com
+
+        //  = 'https://power-drive-2498-dev-ed--c.scratch.vf.force.com';
+
+        // https://power-drive-2498-dev-ed.scratch.lightning.force.com/
+
+        // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
+
+        // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
+        // https://power-drive-2498-dev-ed.scratch.lightning.force.com
+
+        // mvclouds-c-dev-ed.develop.my.salesforce.com
+        // https://mvclouds-c-dev-ed--c.develop.vf.force.com
+        // https://mvclouds-c-dev-ed.develop.lightning.force.com/
+
+
+        // https://mvclouds-dev-ed--mvmu.vf.force.com
+        // https://mvclouds-dev-ed.lightning.force.com
+        // var VfOrigin = this.URl;
     }
 
     renderedCallback() {
@@ -97,6 +104,10 @@ export default class new_upload_btn extends LightningElement {
                 ])
                     .then(() => {
                         console.log('script loaded', XLSX.version);
+                        // const iframe = this.template.querySelector('iframe');
+                        // console.log('ggg==>' + JSON.stringify(iframe));
+                        // console.log('ifrrrr=>' + iframe.src);
+
                         this.parserInitialized = true;
                     })
                     .catch(error => {
@@ -176,33 +187,25 @@ export default class new_upload_btn extends LightningElement {
 
     ExcelToJSON(file) {
         try {
+            console.log(file);
             const reader = new FileReader();
             reader.onload = (event) => {
-                var arr1 = [];
                 const data = event.target.result;
-                console.log('data==>' + JSON.stringify(data));
+                console.log('data of xlsx==>' + data);
                 const workbook = XLSX.read(data, { type: 'binary' });
                 const sheetName = workbook.SheetNames[0];
                 let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
-                console.log('data==>' + JSON.stringify(rowObject));
+                console.log('data of rowobject==>' + JSON.stringify(rowObject));
                 var data1 = Papa.parse(rowObject, {
                     header: true
                 });
                 console.log('data1 ' + JSON.stringify(data1));
-
                 // var headerValue = Object.keys(rowObject[0]);
                 var headerValue = data1.meta.fields;
-                var rowData = data1.data;
-
+                const rowData = data1.data;
+                console.log('rowData' + JSON.stringify(rowData));
                 this.headerCheck(headerValue);
-                for (let i = 0; i < rowData.length; i++) {
-                    arr1.push(Object.values(rowData[i]));
-                }
-                this.tabledata = arr1;
-                let value = this.tabledata;
-                const event1 = new CustomEvent('tabledata', { detail: { value } });
-                this.dispatchEvent(event1);
-
+                this.dataStoreTable(rowData);
             };
 
             reader.onerror = function (ex) {
@@ -222,7 +225,6 @@ export default class new_upload_btn extends LightningElement {
     }
 
     CsvToJSON(file) {
-        var arr2 = [];
         this.loading = true;
         Papa.parse(file, {
             quoteChar: '"',
@@ -234,19 +236,8 @@ export default class new_upload_btn extends LightningElement {
                 let rowObj = results.data;
                 console.log('rowobjec==>' + JSON.stringify(rowObj));
                 let headerName = results.meta.fields;
-                // console.log('a==>' + JSON.stringify(headerName));
-                // const headerName = Object.keys(rowObj[0]);
                 this.headerCheck(headerName);
-                for (let i = 0; i < rowObj.length; i++) {
-                    arr2.push(Object.values(rowObj[i]));
-                    console.log('arr2 Name ' + arr2);
-                }
-                this.tabledata = arr2;
-                let value = this.tabledata;
-                const event = new CustomEvent('tabledata', { detail: { value } });
-                this.dispatchEvent(event);
-
-
+                this.dataStoreTable(rowObj);
             },
             error: (error) => {
                 console.log('result --: ', { error });
@@ -323,6 +314,34 @@ export default class new_upload_btn extends LightningElement {
         const event = new CustomEvent('header', { detail: { value } });
         this.dispatchEvent(event);
 
+    }
+    dataStoreTable(rowObj) {
+        var arr2 = [];
+        for (let i = 0; i < rowObj.length; i++) {
+            arr2.push(Object.values(rowObj[i]));
+        }
+        console.log('arr2 Name ' + arr2);
+        this.tabledata = arr2;
+        let value = this.tabledata;
+        const event = new CustomEvent('tabledata', { detail: { value } });
+        this.dispatchEvent(event);
+
+    }
+
+    parseExcelFile(filedata) {
+        console.log('1st line');
+        try {
+            console.log('JON Data ' + filedata);
+            const utf8Data = new TextEncoder().encode(filedata);
+            const base64Data = btoa(String.fromCharCode(...new Uint8Array(utf8Data)));
+            const decodedData = new TextDecoder().decode(Uint8Array.from(atob(base64Data), c => c.charCodeAt(0)));
+            console.log('decoded data ' + decodedData);
+            const workbook = XLSX.read(decodedData, { type: 'binary' });
+            const csvDataString = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
+            return csvDataString;
+        } catch (error) {
+            console.log('errpr ' + error);
+        }
     }
 
 }

@@ -1,38 +1,61 @@
-<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true">
+<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true" controller="URL_Controller">
     <html>
 
     <head>
         <title>Dropbox Chooser Demo</title>
+        <!-- use the latest version -->
+        <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
         <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="7anturvlx116i1g"></script>
         <script type="text/javascript">
             function chooseFile() {
                 Dropbox.choose({
                     success: function (files) {
                         // Get the selected file data
-                        console.log('file===>' + JSON.stringify(files));
+                        // console.log('file===>' + JSON.stringify(files));
                         var nameFile = files[0].name;
-                        console.log('name'+ nameFile);
+                        // console.log('name' + nameFile);
                         var fileUrl = files[0].link;
                         fetch(fileUrl)
                             .then(response => response.text())
                             .then(data => {
-                                // Handle the file data
-                                console.log(data);
-                                var a = data;
-                                var lexOrigin ='https://power-drive-2498-dev-ed.scratch.lightning.force.com'
-                                sendData();
-                                function sendData(){
-                                    console.log(a);
-                                    var payload = a; 
-                                  
+                                console.log('dropbox data==>' + data);
+                                ExcelToJSON(data);
+                                function ExcelToJSON(data) {
+                                    try {
+                                        console.log('data of xlsx==>' + data);
+                                        const workbook = XLSX.read(data, { type: 'binary' });
+                                        const sheetName = workbook.SheetNames[0];
+                                        let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
+                                        console.log('data of rowobject==>' + JSON.stringify(rowObject));
+                                        var data1 = Papa.parse(rowObject, {
+                                            header: true
+                                        });
+                                        console.log('data1 ' + JSON.stringify(data1));
+                                        var headerValue = data1.meta.fields;
+                                        const rowData = data1.data;
+                                        console.log('rowData' + JSON.stringify(rowData));
+                                        this.headerCheck(headerValue);
+                                        this.dataStoreTable(rowData);
+                                    } catch (error) {
+                                        console.log('error except ', error);
+                                    }
                                 }
-                                var message ={
-                                    name:"new_upload_btn",
-                                    finame:nameFile,
-                                    payload:a
+                                var a = data;
+                                var lexOrigin = "{!lexOrigin1}"
+                                console.log('dddop--->' + lexOrigin);
+                                sendData();
+                                function sendData() {
+                                    console.log(a);
+                                    var payload = a;
+
+                                }
+                                var message = {
+                                    name: "new_upload_btn",
+                                    finame: nameFile,
+                                    payload: a,
                                 };
-                                console.log('message::'+JSON.stringify(message));
-                                parent.postMessage(message,lexOrigin)
+                                console.log('message::' + JSON.stringify(message));
+                                parent.postMessage(message, lexOrigin)
                             })
                             .catch(error => {
                                 // An error occurred while getting the file data
@@ -48,7 +71,8 @@
     </head>
 
     <body>
-        <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none;" />
+        <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none;     cursor: pointer;"
+        />
     </body>
 
     </html>
