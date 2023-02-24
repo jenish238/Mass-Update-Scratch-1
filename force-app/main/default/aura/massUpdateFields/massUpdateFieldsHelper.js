@@ -113,14 +113,19 @@
     callNexthandle: function (component, event, helper) {
         console.log('table Data=====' + component.get("v.tabledata"));
         console.log('length tab data ======' + component.get("v.tabledata").length);
+        console.log('file name in massupdate=====>' + component.get("v.fileName"));
         // -----jenish gangani 12/02 
         var apiList = component.get('v.apiListofObject');
         var headerData = component.get("v.header");
+        var operation = component.get("v.operation");
+        console.log('opratioon ==>' + operation);
         // headerData[0] = headerData[0].toUpperCase();
         // -----jenish gangani 12/02 
 
         if (component.get("v.tabledata").length == 0) {
             helper.showToast(component, "Info", "Info!", "Please Upload File");
+        } else if (component.get("v.operation") == '') {
+            helper.showToast(component, "Info", "Info!", "Please Select Operation");
         } else if (component.get("v.selectedObject") == '') {
             helper.showToast(component, "Info", "Info!", "Please Select Object First");
         }
@@ -548,7 +553,7 @@
         console.log('sfPushDataListJson:::::' + sfPushDataListJson);
 
         action.setParams({
-            'selectedListOfFields': selectedFieldsListArray, //not
+            'selectedListOfFields': selectedFieldsListArray,
             'selectObjectName': selectObjectName,
             'headerData': headerData,
             'tableData': tableDataString,
@@ -618,7 +623,7 @@
 
             } else {
                 component.set("v.IsSpinner", false);
-                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong saveRecordData");
+                helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong saveRecordsToSFForInsert");
             }
             component.set("v.IsSpinner", false);
         });

@@ -92,12 +92,11 @@
         throw (response);
       }
       accessToken = response.access_token;
-      console.log('accessTokern===',accessToken);
       document.getElementById('signout_button').style.visibility = 'visible';
       document.getElementById('authorize_button').innerText = 'Refresh';
       await createPicker();
     };
-    console.log('accessTokermnn==',accessToken);
+
     if (accessToken === null) {
       // Prompt the user to select a Google Account and ask for consent to share their data
       // when establishing a new session.
@@ -185,7 +184,7 @@
                         // var accessToken = access_token;
                         xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         
-                        xhr.responseType = "blob";
+                        xhr.responseType = "text";
                         xhr.onload = function () {
         
                             gDoxBlob = xhr.response;

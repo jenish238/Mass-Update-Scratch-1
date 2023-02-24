@@ -25,7 +25,7 @@ export default class GoogleFilePickerComponent extends LightningElement {
         console.log('connectedCallback called ');
         // var VfOrigin = "https://power-drive-2498-dev-ed.scratch.lightning.force.com";
        
-       
+                        
         var VfOrigin = "https://power-drive-2498-dev-ed--c.scratch.vf.force.com";
         this.vfRoot = VfOrigin;
         console.log('vd origin-'+this.vfRoot);
@@ -42,7 +42,7 @@ export default class GoogleFilePickerComponent extends LightningElement {
             console.log('message 2===',message);
             console.log('message 11===',message.data.payload);
             console.log('message===',message.data.name);
-            if (message.data.name === "SampleVFToLWCMessage") {
+            if (message.data.name === "SendingListOfFiles") {
                 console.log('message equals');
                 this.receivedMessage = message.data.payload;
                 

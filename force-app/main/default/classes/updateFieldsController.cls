@@ -294,6 +294,7 @@ public with sharing class updateFieldsController {
         System.debug('selectObjectName======'+selectObjectName);
         System.debug('headerData======'+headerData);
         System.debug('tableData======'+tableData);
+        // System.debug('tableData type of======'+tableData instanceof String);
         System.debug('tablePushDataListJson======'+tablePushDataListJson);
         System.debug('FieldToUpdateList====='+FieldToUpdateList); 
 
@@ -772,6 +773,8 @@ public with sharing class updateFieldsController {
     // this method for insert record using batch class jenish gangani 11/02/23
     @AuraEnabled
     public static void insertRecord(String data, String FieldToUpdateList, String selectObjectName){
+        System.debug('insertRecord Method');
+        System.debug('data of insertRecord===>'+ data);
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);
