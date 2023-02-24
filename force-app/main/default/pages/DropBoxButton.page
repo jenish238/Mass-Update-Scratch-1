@@ -21,8 +21,11 @@
                                 // Handle the file data
                                 console.log('tremp' + typeof (data));
                                 var a = data;
-                                var file = files[0];
-                                var lexOrigin = 'https://power-drive-2498-dev-ed.scratch.lightning.force.com'
+                                // var file = files[0]
+                                // var lexOrigin = 'https://power-drive-2498-dev-ed.scratch.lightning.force.com'
+                                                    https://power-drive-2498-dev-ed.scratch.lightning.force.com
+                                var lexOrigin="{!lexOrigin1}"
+                                console.log('dddop--->'+ lexOrigin);
                                 // var wb = XLSX.read(await(await fetch(fileUrl)).arrayBuffer());
                                 // console.log('wb==>' + wb);
                                 // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
@@ -41,7 +44,6 @@
                                     name: "new_upload_btn",
                                     finame: nameFile,
                                     payload: a,
-                                    binfile: file
                                 };
                                 console.log('message::' + JSON.stringify(message));
                                 parent.postMessage(message, lexOrigin)
@@ -60,7 +62,8 @@
     </head>
 
     <body>
-        <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none;" />
+        <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none;     cursor: pointer;
+        " />
     </body>
 
     </html>

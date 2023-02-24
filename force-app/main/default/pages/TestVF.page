@@ -59,13 +59,13 @@
             
             gapi.load("client:auth2", function() {
                 gapi.auth2.init({client_id: "816521585707-lvdkgvro4cmi69rnuu2308p7hkbqoeg4.apps.googleusercontent.com",plugin_name: "hello"});
-                return gapi.auth2.getAuthInstance().currentUser.get().reloadAuthResponse()
-                .then(function(response) {
-                    console.log('success 2');
-                    // Use the access token to make requests to the Google API
-                    accessToken = response.access_token;
-                    console.log('accessToken=='+accessToken);
-                })
+                // return gapi.auth2.getAuthInstance().currentUser.get().reloadAuthResponse()
+                // .then(function(response) {
+                //     console.log('success 2');
+                //     // Use the access token to make requests to the Google API
+                //     accessToken = response.access_token;
+                //     console.log('accessToken=='+accessToken);
+                // })
             });
             // .then(function(response) {
             //     console.log('success 2');
@@ -108,7 +108,7 @@
                     return;
                 }else{
 	                console.log('data from LWC===',event.data.fileId );
-                    getFileData(event.data.fileId);
+                    //getFileData(event.data.fileId);
                 }
 
             },false);
@@ -129,7 +129,7 @@
                             
                             var gDoxBlob = null;
                             var xhr = new XMLHttpRequest();
-                            xhr.open("GET", fileDownloadUrl); //file.url
+                            xhr.open("GET", fileDownloadUrl, true); //file.url
                             
                             // var accessToken = access_token;
                             xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);

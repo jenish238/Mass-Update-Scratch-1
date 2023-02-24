@@ -24,34 +24,42 @@ export default class new_upload_btn extends LightningElement {
         console.log('connected call back');
         getVFOrigin()
             .then(result => {
-                console.log('result' + result);
+                console.log('result==>' + result);
                 this.URl = result;
+                // console.log('url=->'+ this.URl);
+                const updatedUrl =result.replace(".my.salesforce.com", ".vf.force.com");
+                // console.log('update--->'+ updatedUrl);
+                const matchIndex = updatedUrl.indexOf("-ed");
+                // console.log('match dd'+ matchIndex);
+                var VfOrigin = updatedUrl.substring(0, matchIndex+3) + "--c" + updatedUrl.substring(matchIndex+3);
+                console.log('vfOrigin--->',VfOrigin);
                 // return result;
             })
             .catch(error => {
                 console.error(error);
             });
+           
+
+
         console.log('url ' + window.location.origin);
         https://power-drive-2498-dev-ed.scratch.my.salesforce.com
 
-        var VfOrigin = 'https://power-drive-2498-dev-ed--c.scratch.vf.force.com';
+        //  = 'https://power-drive-2498-dev-ed--c.scratch.vf.force.com';
 
         // https://power-drive-2498-dev-ed.scratch.lightning.force.com/
-
-        // result https://power-drive-2498-dev-ed.scratch--c.vf.force.com
 
         // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
         // https://power-drive-2498-dev-ed.scratch.lightning.force.com
 
-
+        // mvclouds-c-dev-ed.develop.my.salesforce.com
         // https://mvclouds-c-dev-ed--c.develop.vf.force.com
         // https://mvclouds-c-dev-ed.develop.lightning.force.com/
 
 
         // https://mvclouds-dev-ed--mvmu.vf.force.com
-        // https://mvclouds-dev-ed--mvmu.vf.force.com/apex/userGuideVf
-        // https://mvclouds-dev-ed.lightning.force.com/lightning/n/MVMU__Record_Update
+        // https://mvclouds-dev-ed.lightning.force.com
         // var VfOrigin = this.URl;
+        
 
 
 
@@ -63,10 +71,12 @@ export default class new_upload_btn extends LightningElement {
 
             //handle the message
             if (message.data.name === "new_upload_btn") {
+                console.log('event');
                 let fileName = message.data.finame;
                 let extension = fileName.split('.').pop();
 
                 if (extension == 'csv') {
+                    console.log('csv');
                     var dropboxData = message.data.payload;
                     var data1 = Papa.parse(dropboxData, {
                         header: true

@@ -9,7 +9,7 @@ public with sharing class URL_Controller {
     System.debug('baseURL===>'+ baseURL);
  
     // Expected Format for DE, Sandbox & Production ORgs = https://domain--c.vf.force.com
-    vfOrigin = baseURL.split('.my.')[0] + '--c.scratch.' + 'vf.force.com';
+    // vfOrigin = baseURL.split('.my.')[0] + '--c.scratch.' + 'vf.force.com';
 
     // mvclouds-c-dev-ed.develop.my.salesforce.com
     // https://mvclouds-c-dev-ed--c.develop.vf.force.com/
@@ -30,9 +30,9 @@ public with sharing class URL_Controller {
       vfOrigin = baseURL.split('.my.')[0]+'--c.'+'visualforce.com';
     }  */
  
-    return vfOrigin;
+    return baseURL;
     }
-    public string lexOrigin {get{ 
+    public string lexOrigin1 {get{ 
 return URL.getOrgDomainUrl().toExternalForm().split('.my.')[0]+'.lightning.force.com';
 } set;}
 }
