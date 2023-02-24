@@ -4,17 +4,16 @@ import PARSER from '@salesforce/resourceUrl/PapaParse';
 import sheetjs from '@salesforce/resourceUrl/sheetjsNew';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getVFOrigin from '@salesforce/apex/URL_Controller.getVFOrigin';
+// import PageReference from '@salesforce/schema/PageReference';
+
 
 
 
 export default class new_upload_btn extends LightningElement {
     @api myRecordId;
-    @api header;
-    @api tabledata;
     parserInitialized = false;
-    @track progress = 0;
-    @track fileName = 'No Files Selected..';
-    @api URL;
+    @api progress;
+    @api fileName;
 
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
@@ -24,44 +23,37 @@ export default class new_upload_btn extends LightningElement {
         console.log('connected call back');
         getVFOrigin()
             .then(result => {
-                // console.log('result==>' + result);                // console.log('url=->'+ this.URl);
                 const updatedUrl = result.replace(".my.salesforce.com", ".vf.force.com");
-                // console.log('update--->'+ updatedUrl);
                 const matchIndex = updatedUrl.indexOf("-ed");
-                // console.log('match dd'+ matchIndex);
                 var VfOrigin = updatedUrl.substring(0, matchIndex + 3) + "--c" + updatedUrl.substring(matchIndex + 3);
-                // console.log('vfOrigin--->', VfOrigin);
 
                 window.addEventListener("message", (message) => {
                     if (message.origin !== VfOrigin) {
                         //Not the expected origin
                         return;
                     }
-
                     //handle the message
                     if (message.data.name === "new_upload_btn") {
                         console.log('event');
                         let fileName = message.data.finame;
+                        this.fileName = message.data.finame;
+                        this.sendFileName(this.fileName);
                         let extension = fileName.split('.').pop();
 
                         if (extension == 'csv') {
                             console.log('csv');
-                            var dropboxData = message.data.payload;
-                            var data1 = Papa.parse(dropboxData, {
+                            var data1 = Papa.parse(message.data.payload, {
                                 header: true
                             });
+                            this.progressBar();
                             var headerValue = data1.meta.fields;
                             var rowData = data1.data;
-
                             this.headerCheck(headerValue);
                             this.dataStoreTable(rowData);
                         } else {
                             console.log('xlsx');
-                            var dropboxData1 = message.data.payload;
-                            console.log('data noon ==>' + typeof (dropboxData1));
-                            var rowData = this.parseExcelFile(dropboxData1);
-                            console.log('rowdata==>' + rowData);
-                            this.dataStoreTable(rowData);
+                            this.progressBar();
+                            var rowData = this.parseExcelFile(message.data.payload);
                         }
                     }
                 });
@@ -72,26 +64,6 @@ export default class new_upload_btn extends LightningElement {
                 console.error(error);
             });
 
-        // console.log('url ' + window.location.origin);
-        // https://power-drive-2498-dev-ed.scratch.my.salesforce.com
-
-        //  = 'https://power-drive-2498-dev-ed--c.scratch.vf.force.com';
-
-        // https://power-drive-2498-dev-ed.scratch.lightning.force.com/
-
-        // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
-
-        // https://power-drive-2498-dev-ed--c.scratch.vf.force.com
-        // https://power-drive-2498-dev-ed.scratch.lightning.force.com
-
-        // mvclouds-c-dev-ed.develop.my.salesforce.com
-        // https://mvclouds-c-dev-ed--c.develop.vf.force.com
-        // https://mvclouds-c-dev-ed.develop.lightning.force.com/
-
-
-        // https://mvclouds-dev-ed--mvmu.vf.force.com
-        // https://mvclouds-dev-ed.lightning.force.com
-        // var VfOrigin = this.URl;
     }
 
     renderedCallback() {
@@ -104,10 +76,6 @@ export default class new_upload_btn extends LightningElement {
                 ])
                     .then(() => {
                         console.log('script loaded', XLSX.version);
-                        // const iframe = this.template.querySelector('iframe');
-                        // console.log('ggg==>' + JSON.stringify(iframe));
-                        // console.log('ifrrrr=>' + iframe.src);
-
                         this.parserInitialized = true;
                     })
                     .catch(error => {
@@ -125,7 +93,7 @@ export default class new_upload_btn extends LightningElement {
         try {
             if (event.detail.files.length > 0) {
                 const file = event.detail.files[0];
-                console.log('filesss' + JSON.stringify(file));
+                // console.log('filesss' + JSON.stringify(file));
                 this.fileName = file.name;
                 this.progress = 0;
                 let disableNext = false;
@@ -141,15 +109,7 @@ export default class new_upload_btn extends LightningElement {
                     );
                 } else {
                     //*    for progress bar start
-                    let progress = 0;
-                    const animate = () => {
-                        progress += 5;
-                        if (progress <= 100) {
-                            this.progress = progress;
-                            requestAnimationFrame(animate);
-                        }
-                    };
-                    requestAnimationFrame(animate);
+                    this.progressBar();
                     //*    for progress bar end
 
                     let extension = this.fileName.split('.').pop();
@@ -168,12 +128,8 @@ export default class new_upload_btn extends LightningElement {
                         return;
                     }
                 }
+                this.passEvent(disableNext);
 
-                event.preventDefault();
-                const selectEvent = new CustomEvent('disablenextbutton', {
-                    detail: { disableNext }
-                });
-                this.dispatchEvent(selectEvent);
             }
         } catch (error) {
             const toastEvent = new ShowToastEvent({
@@ -183,6 +139,8 @@ export default class new_upload_btn extends LightningElement {
             });
             this.dispatchEvent(toastEvent);
         }
+
+        this.sendFileName(this.fileName);
     }
 
     ExcelToJSON(file) {
@@ -261,8 +219,6 @@ export default class new_upload_btn extends LightningElement {
         trimrow = newArray2;
         console.log('new open :::' + trimrow);
 
-        // --------------------------------------------------jenish gangani5/2/23
-
         if (trimrow.indexOf("") !== -1) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -271,10 +227,7 @@ export default class new_upload_btn extends LightningElement {
                     variant: 'Info',
                 }),
             );
-            let value = 'true';
-            const event = new CustomEvent('passvalue', { detail: { value } });
-            console.log('event==>' + JSON.stringify(event));
-            this.dispatchEvent(event);
+            this.passEvent('true');
         } else if (trimrow.indexOf("") == (trimrow.length - 1)) {
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -283,9 +236,7 @@ export default class new_upload_btn extends LightningElement {
                     variant: 'Info',
                 }),
             );
-            let value = 'true';
-            const event = new CustomEvent('passvalue', { detail: { value } });
-            this.dispatchEvent(event);
+            this.passEvent('true');
 
         }
         else if (checkIfDuplicateExists(trimrow)) {
@@ -296,21 +247,16 @@ export default class new_upload_btn extends LightningElement {
                     variant: 'Info',
                 }),
             );
-            let value = 'true';
-            const event = new CustomEvent('passvalue', { detail: { value } });
-            this.dispatchEvent(event);
-        } else {
-            let value = 'false';
-            const event = new CustomEvent('passvalue', { detail: { value } });
-            this.dispatchEvent(event);
+            this.passEvent('true');
 
+        } else {
+            this.passEvent('false');
         }
 
         function checkIfDuplicateExists(arr) {
             return new Set(arr).size != arr.length;
         }
-        this.headerName = trimrow;
-        let value = this.headerName;
+        let value = trimrow;
         const event = new CustomEvent('header', { detail: { value } });
         this.dispatchEvent(event);
 
@@ -321,27 +267,53 @@ export default class new_upload_btn extends LightningElement {
             arr2.push(Object.values(rowObj[i]));
         }
         console.log('arr2 Name ' + arr2);
-        this.tabledata = arr2;
-        let value = this.tabledata;
+        const newArray = arr2.map(subarray => subarray.join(','));
+        let value = newArray;
         const event = new CustomEvent('tabledata', { detail: { value } });
         this.dispatchEvent(event);
 
     }
 
     parseExcelFile(filedata) {
-        console.log('1st line');
+        console.log('1st line', filedata);
         try {
-            console.log('JON Data ' + filedata);
-            const utf8Data = new TextEncoder().encode(filedata);
-            const base64Data = btoa(String.fromCharCode(...new Uint8Array(utf8Data)));
-            const decodedData = new TextDecoder().decode(Uint8Array.from(atob(base64Data), c => c.charCodeAt(0)));
-            console.log('decoded data ' + decodedData);
-            const workbook = XLSX.read(decodedData, { type: 'binary' });
-            const csvDataString = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
-            return csvDataString;
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(filedata);
+            reader.onload = function () {
+                const binaryData = reader.result;
+                const workbook = XLSX.read(binaryData, { type: 'binary' });
+                const csvDataString = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
+                console.log('data converted to csv ' + csvDataString);
+                this.headerCheck(headerValue);
+                this.dataStoreTable(rowData);
+            };
         } catch (error) {
-            console.log('errpr ' + error);
+            console.log('error ' + error);
         }
+    }
+    progressBar() {
+        let progress = 0;
+        const animate = () => {
+            progress += 5;
+            if (progress <= 100) {
+                this.progress = progress;
+                requestAnimationFrame(animate);
+            }
+        };
+        requestAnimationFrame(animate);
+        debugger;
+
+    }
+    passEvent(valueofEvent) {
+        let value = valueofEvent;
+        const event = new CustomEvent('passvalue', { detail: { value } });
+        this.dispatchEvent(event);
+
+    }
+    sendFileName(filName) {
+        let value = filName;
+        const event1 = new CustomEvent('filevalue', { detail: { value } });
+        this.dispatchEvent(event1);
     }
 
 }

@@ -23,9 +23,9 @@
 
     <!-- jenish ganganai 2/2/23 -->
     <aura:attribute name="apiListofObject" type="object[]" />
-    <aura:attribute name="progress" type="Integer" default="0"/>
+    <aura:attribute name="progress" type="Integer" />
     <aura:attribute name="fileName" type="String" default="No File Selected.." />
-    <aura:attribute name="operation" type="String" default="choose one..." />  
+    <aura:attribute name="operation" type="String" />  
      <!-- jenish gangani 2/2/23 -->
 
     <aura:attribute name="allDataList" type="object[]" />
@@ -186,7 +186,7 @@
                             <div class="slds-float_right slds-col">
                                 <lightning:helptext content="Select your Operation."/>
                             </div>
-                            <lightning:select aura:id="select" name="select" label="Select a operation:" onchange="{! c.onChange }">
+                            <lightning:select aura:id="select" name="select" label="Select a operation:" value="{!v.operation}" onchange="{! c.onChange }">
                                 <!-- required="true" -->
                                         <option value="">choose one...</option>
                                         <option value="insert">insert</option>
@@ -195,7 +195,7 @@
                                     <br/>
 
                             <!--* Nishit Suthar 20/02/23 : Added new LWC Component -->
-                            <c:new_upload_btn ondisablenextbutton="{!c.handleNextButton}" onpassvalue="{!c.handleNextButton}" onheader="{!c.handleHeader}" ontabledata="{!c.handleTableData}"/>
+                            <c:new_upload_btn onfilevalue="{!c.handlefileValue}" fileName="{!v.fileName}" progress='{!v.progress}' onpassvalue="{!c.handleNextButton}" onheader="{!c.handleHeader}" ontabledata="{!c.handleTableData}"/>
                             
                              <!-- jenish gangani 8/2/23  -->
                             <!-- <c:importCsvFile   header="{!v.header}" tabledata="{!v.tabledata}"  progress="{!v.progress}" fileName ="{!v.fileName}"/> -->

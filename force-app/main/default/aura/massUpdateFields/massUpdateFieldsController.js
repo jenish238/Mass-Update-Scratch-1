@@ -1,7 +1,6 @@
 ({
     onChange: function (component, event, helper) {
         component.set("v.operation", component.find('select').get('v.value'));
-        alert(cmp.find('select').get('v.value') + ' pie is good.');
     },
     doinit: function (component, event, helper) {
         component.set("v.IsSpinner", true);
@@ -89,6 +88,11 @@
 
         // -----------------------------jenish gangani 8/2/23
         var nextStep = selectedStep == 'Step2' ? 'Step1' : 'finished';
+        component.set("v.progress", '100');
+        console.log('file name==>' + component.get('v.fileName'));
+
+        // component.set("v.fileName", '100');
+
 
         if (nextStep == 'finished') {
             component.set("v.finished", nextStep);
@@ -128,6 +132,7 @@
         } else {
             component.set("v.currentStep", nextStep);
         }
+
     },
 
     addRow: function (component, event, helper) {
@@ -276,13 +281,13 @@
         component.set("v.stepOneNextButton", event.getParam('value'));
     },
     handleHeader: function (component, event, helper) {
-        console.log('header data==>' + event.getParam('value'));
         component.set("v.header", event.getParam('value'));
     },
     handleTableData: function (component, event, helper) {
-        console.log('tabledata data==>' + event.getParam('value'));
         component.set("v.tabledata", event.getParam('value'));
-        console.log('data of table ==>' + component.get(v.tabledata));
+    },
+    handlefileValue: function (component, event, helper) {
+        component.set("v.fileName", event.getParam('value'));
     }
 
 })

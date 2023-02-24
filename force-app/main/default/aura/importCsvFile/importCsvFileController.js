@@ -122,6 +122,8 @@
                         component.set("v.tabledata", tabledata);
                         console.log("tableData====" + tabledata.length);
                         console.log("tableData::::" + tabledata);
+                        console.log("tableData type of ::::" + typeof (tabledata));
+
                         var fileName = fName;
                         component.set("v.fileName", fileName);
                         console.log("file Name After===" + fileName);
