@@ -124,7 +124,7 @@
 
         if (component.get("v.tabledata").length == 0) {
             helper.showToast(component, "Info", "Info!", "Please Upload File");
-        } else if (component.get("v.operation") == undefined) {
+        } else if (component.get("v.operation") == '') {
             helper.showToast(component, "Info", "Info!", "Please Select Operation");
         } else if (component.get("v.selectedObject") == '') {
             helper.showToast(component, "Info", "Info!", "Please Select Object First");

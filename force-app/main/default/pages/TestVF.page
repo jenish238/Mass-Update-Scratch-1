@@ -21,18 +21,18 @@
            	function authenticate() {
                 return gapi.auth2.getAuthInstance()
                 .signIn({scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.photos.readonly https://www.googleapis.com/auth/drive.readonly"})
-                .then(function() { 
-                    console.log("Sign-in successful"); 
-                    return gapi.auth2.getAuthInstance().currentUser.get().reloadAuthResponse();
-                }).then(function(response) {
-                    // Use the access token to make requests to the Google API
-                    accessToken = response.access_token;
-                    console.log('accessToken 30==',accessToken);
-                    // ...
-                },
                 // .then(function() { 
                 //     console.log("Sign-in successful"); 
+                //     return gapi.auth2.getAuthInstance().currentUser.get().reloadAuthResponse();
+                // }).then(function(response) {
+                //     // Use the access token to make requests to the Google API
+                //     accessToken = response.access_token;
+                //     console.log('accessToken 30==',accessToken);
+                //     // ...
                 // },
+                .then(function() { 
+                    console.log("Sign-in successful"); 
+                },
                     function(err) { console.error("Error signing in", err); });
             }
             
