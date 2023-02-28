@@ -637,11 +637,7 @@ public with sharing class updateFieldsController {
                                 try {
                                     // sobj.put(field.SObjectField, addMap.get('CSV'+field.csvfield).trim());
                                    // String a = addMap.get('CSV'+field.csvfield).removeEnd('.000Z').trim() + '.000-00:00';
-
                                 //  String a = (addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00';
-
-
-
                                     //System.debug('a::::'+ a);
                                     // a = a + '.711-02:00';
                                     //a = a + '.000-00:00';
