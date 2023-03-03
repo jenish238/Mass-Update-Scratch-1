@@ -157,7 +157,6 @@
                     </div>
                 </div>
             </aura:if>
-            {!v.currentStep}
             <aura:if isTrue="{!v.currentStep == 'Step1'}">
                 <aura:if isTrue="{!v.IsSpinner}">
                     <lightning:spinner variant="brand"  size="large" />
