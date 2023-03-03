@@ -4,3 +4,10 @@
     margin-left: 15px;
     cursor: pointer;
 }
+/* .THIS .slds-progress-bar__value{
+    background-color:#354ea3 !important;
+    background: var(--slds-g-color-brand-base-60, var(--lwc-progressBarColorBackgroundFill,rgb(26, 185, 255)));
+} */
+.slds-progress-bar__value {
+    background-color: blue;
+  }
