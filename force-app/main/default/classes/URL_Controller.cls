@@ -1,7 +1,12 @@
 public with sharing class URL_Controller {
-    public URL_Controller() {
 
-    }
+  public string lexOrigin1 {get;set;}
+
+  public URL_Controller() {
+
+    // lexOrigin1 = URL.getOrgDomainUrl().toExternalForm().split('.my.')[0]+'.lightning.force.com';
+    System.debug('constructor called===');
+  }
     @AuraEnabled(cacheable=true)
     public static string getVFOrigin() {
       string vfOrigin = '';
@@ -32,7 +37,11 @@ public with sharing class URL_Controller {
  
     return baseURL;
     }
-    public string lexOrigin1 {get{ 
-return URL.getOrgDomainUrl().toExternalForm().split('.my.')[0]+'.lightning.force.com';
-} set;}
+    // public string lexOrigin1 {get{ 
+    //   // return URL.getOrgDomainUrl().toExternalForm().split('.my.')[0]+'.lightning.force.com';
+    //   return URL.getOrgDomainUrl().toExternalForm().split('.my.')[0]+'.lightning.force.com';
+    // } set;}
+
+
+    
 }

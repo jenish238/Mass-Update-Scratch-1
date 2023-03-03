@@ -23,10 +23,12 @@ export default class new_upload_btn extends LightningElement {
         console.log('connected call back');
         getVFOrigin()
             .then(result => {
+                console.log('result==' + result);
                 const updatedUrl = result.replace(".my.salesforce.com", ".vf.force.com");
+                console.log('updatedUrl==' + updatedUrl);
                 const matchIndex = updatedUrl.indexOf("-ed");
                 var VfOrigin = updatedUrl.substring(0, matchIndex + 3) + "--c" + updatedUrl.substring(matchIndex + 3);
-
+                console.log('final VfOrigin==' + VfOrigin);
                 window.addEventListener("message", (message) => {
                     if (message.origin !== VfOrigin) {
                         //Not the expected origin
@@ -93,8 +95,6 @@ export default class new_upload_btn extends LightningElement {
         try {
             if (event.detail.files.length > 0) {
                 const file = event.detail.files[0];
-                // console.log('filesss' + JSON.stringify(file));
-                this.fileName = file.name;
                 this.progress = 0;
                 let disableNext = false;
 
@@ -107,7 +107,17 @@ export default class new_upload_btn extends LightningElement {
                             variant: 'Info',
                         }),
                     );
-                } else {
+                } else if (event.detail.files.length > 1) {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Select One file',
+                            message: 'Please Select One file',
+                            variant: 'Info',
+                        }),
+                    );
+                }
+                else {
+                    this.fileName = file.name;
                     //*    for progress bar start
                     this.progressBar();
                     //*    for progress bar end

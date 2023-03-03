@@ -36,7 +36,7 @@
     <aura:attribute name="TableLightningData" type="List"/>
     <aura:attribute name="FieldToUpdateList" type="List"/>
     <aura:attribute name="updateFieldList" type="String" />
-    <aura:attribute name="IsSpinner" type="Boolean" />
+    <aura:attribute name="IsSpinner" type="Boolean" default="true"/>
     <aura:attribute name="sfId" type="Integer"/>
     <aura:attribute name="EmailId" type="String" default="Email" />  
     <aura:attribute name="pageNumber" type="Integer" default="1"/>
@@ -55,6 +55,8 @@
     <aura:attribute name="stepOneNextButton" type="boolean" default="false"/>
     <aura:attribute name="CriteriaDeleteButton" type="boolean" default="true"/>
     <aura:attribute name="FieldMappingDeleteButton" type="boolean" default="false"/>
+    <aura:attribute name="inputValue" type="boolean" default="false"/>
+
           <!-- jenish ganganai 2/2/23 -->
 
           <!-- jenish gangani 7/2/23 -->
@@ -155,7 +157,7 @@
                     </div>
                 </div>
             </aura:if>
-            
+            {!v.currentStep}
             <aura:if isTrue="{!v.currentStep == 'Step1'}">
                 <aura:if isTrue="{!v.IsSpinner}">
                     <lightning:spinner variant="brand"  size="large" />
@@ -165,8 +167,12 @@
                         <div class="slds-float_right" style="margin-right:1%">
                             <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
                                 <!-- <a>Help?<c:quickBot/></a> -->
-                                    <a onclick="{!c.handleButtonClick}">Help?</a>
-                                    <aura:html tag="div" aura:id="lwcContainer" />
+                                    <a onclick="{!c.openLWC}">Help?</a>
+                                    <!-- <a onclick="{!c.handleButtonClick}">Help?</a>
+                                    <aura:html tag="div" aura:id="lwcContainer" /> -->
+                                    <aura:if isTrue="{!v.inputValue == true}">
+                                    <c:quickBot onvaluechange="{!c.getValueFromLwc}"/><br/>
+                                    </aura:if>
                             </div>
                             <br/>
                             <!-- <aura:if isTrue="{!v.selectObjectHelp}"> -->
@@ -253,8 +259,12 @@
                     <div class="slds-float_right" style="margin-right:1%">
                         <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
                             <!-- <a>Help?</a> -->
-                            <a onclick="{!c.handleButtonClick}">Help?</a>
-                                    <aura:html tag="div" aura:id="lwcContainer" />
+                         <a onclick="{!c.openLWC}">Help?</a>
+                                    <!-- <a onclick="{!c.handleButtonClick}">Help?</a>
+                                    <aura:html tag="div" aura:id="lwcContainer" /> -->
+                                    <aura:if isTrue="{!v.inputValue == true}">
+                                    <c:quickBot onvaluechange="{!c.getValueFromLwc}"/><br/>
+                                    </aura:if>
                         </div>
                         <br/>
                         <!-- <aura:if isTrue="{!v.selectObjectHelp}"> -->

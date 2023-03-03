@@ -65,7 +65,7 @@
 
     onChangeObject: function (component, event, helper) {
         console.log('onChangeObject');
-        component.set("v.IsSpinner", false);
+        component.set("v.IsSpinner", true);
         var getFieldSet = component.get("c.getObjectSelectField");
         var selectedObject = component.get("v.selectedObject") + '';
         getFieldSet.setParams({
@@ -100,14 +100,17 @@
                 //     component.set("v.stepOneNextButton", false);
 
                 // }
+                component.set("v.IsSpinner", false);
+
 
             } else {
                 helper.showToast(component, "Error", "Failed!", "Error accur, Something went wrong OnChangeObject");
+                component.set("v.IsSpinner", false);
+
             }
         });
         $A.enqueueAction(getFieldSet);
-        debugger;
-        component.set("v.IsSpinner", false);
+        // component.set("v.IsSpinner", false);
 
     },
 

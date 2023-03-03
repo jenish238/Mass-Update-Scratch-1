@@ -1,4 +1,4 @@
-<apex:page showHeader="true" sidebar="true" standardStylesheets="true" applyHtmlTag="true" controller="URL_Controller">
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" applyHtmlTag="true" controller="URL_Controller" >
     <html>
 
     <head>
@@ -49,19 +49,21 @@
             function messageSendLWC(nameFile, a) {
 
                 var lexOrigin = "{!lexOrigin1}"
-
+                
                 var message = {
                     name: "new_upload_btn",
                     finame: nameFile,
                     payload: a
                 };
-                console.log('message::' + JSON.stringify(message));
+                // console.log('message::' + JSON.stringify(message));
+                console.log('message::' + lexOrigin);
+                // console.log('url of VF=='+lexOrigin);
                 parent.postMessage(message, lexOrigin)
             }
         </script>
     </head>
 
-    <body>
+    <body style="margin:0;">
         <apex:image url="{!$Resource.dropbox}" onclick="chooseFile();" height="28px" width="30px" style="border:none; cursor: pointer;
 " />
     </body>
