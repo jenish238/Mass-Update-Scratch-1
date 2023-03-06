@@ -322,6 +322,7 @@
             if (result == 'SUCCESS') {
                 component.set("v.IsSpinner", true);
                 var res = response.getReturnValue();
+                console.log('res==>' + res);
                 console.log('resfor insert::::' + JSON.stringify(res));
                 if (res.startsWith('Error Invalid')) {
                     helper.showToast(component, "Info", "Info!", res);
@@ -329,10 +330,8 @@
                 } else {
 
                     let insertData = response.getReturnValue();
-                    console.log('resfor insert::::' + JSON.stringify(insertData));
-                    console.log('type of insert::::' + typeof (insertData));
                     component.set("v.insertFieldList", insertData);
-                    console.log('component::==>' + component.get("v.insertFieldList")); 
+                    console.log('component::==>' + component.get("v.insertFieldList"));
                 }
 
 

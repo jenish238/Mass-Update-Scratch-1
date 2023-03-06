@@ -536,10 +536,10 @@
                             <div class="slds-float_right" style="display:inline-block;">      
                                 <lightning:button variant="brand" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.PreviousStep2 }" /> 
                                 <aura:if isTrue="{!greaterthan(v.sfId,0)}">
-                                    <lightning:button variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>
+                                    <lightning:button disabled="{!v.stepOneNextButton}" variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>
                                 </aura:if>
                                 <aura:if isTrue="{!v.operation=='insert'}">
-                                    <lightning:button variant="brand" value="{!v.currentStep}" label="insert" title="insert" onclick="{! c.saveRecordsToSFForInsert }"/>
+                                    <lightning:button disabled="{!v.stepOneNextButton}" variant="brand" value="{!v.currentStep}" label="insert" title="insert" onclick="{! c.saveRecordsToSFForInsert }"/>
                                 </aura:if>
                             </div>
                         </div>

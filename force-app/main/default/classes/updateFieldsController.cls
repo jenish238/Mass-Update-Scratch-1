@@ -475,10 +475,7 @@ public with sharing class updateFieldsController {
                             }
                             else if(fielddataType == Schema.DisplayType.DATE){
                                 try{ 
-                                   
                                     sobj.put(field.SObjectField, date.parse(addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()));  
-                                  
- 
                                 }catch(Exception e){
                                     System.debug('Error for Date ' + e.getMessage());
                                     return 'Error '+e.getMessage();
@@ -495,12 +492,16 @@ public with sharing class updateFieldsController {
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
+                                 try {
                                 String[] strTimeSplit = (addMap.get('CSV'+field.csvfield).trim()).split(':');
                                 Time timeChange = Time.newInstance( Integer.valueOf(strTimeSplit[0]) //hour
                                                                    ,Integer.valueOf(strTimeSplit[1]) //min
                                                                    ,0                                //sec
                                                                    ,0); 
-                              sobj.put(field.SObjectField, timeChange);                              }
+                              sobj.put(field.SObjectField, timeChange); 
+                             } catch (Exception e) {
+                                    return 'Error ' + e.getMessage();
+                                }                             }
                             else if(fielddataType == Schema.DisplayType.Boolean){
                                 sobj.put(field.SObjectField, Boolean.valueof(addMap.get('CSV'+field.csvfield).trim()));  
                             }
@@ -544,7 +545,7 @@ public with sharing class updateFieldsController {
                                 try{
                                     sobj.put(field.SObjectField, date.parse(addMap.get('CSV'+field.csvfield).removeEnd(' 00:00:00').trim()));      
                                 }catch(Exception e){
-                                    System.debug('Error ' + e.getMessage());
+                                return 'Error '+e.getMessage();
                                 }
                             } 
                             else if(fielddataType == Schema.DisplayType.DATETIME){
@@ -552,7 +553,7 @@ public with sharing class updateFieldsController {
                                 try {
                                      sobj.put(field.SObjectField, (DateTime)JSON.deserialize('"' + ((addMap.get('CSV'+field.csvfield).trim()).substringBefore('.') + '.000-00:00') + '"', DateTime.class)); 
                                 } catch (Exception e) {
-                                     System.debug('Error for date/Time '+ e.getMessage());
+                                    return 'Error '+e.getMessage();
                                 }
                                 // jenishgangani 15/02 insert datetime field
                                 // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
@@ -567,7 +568,7 @@ public with sharing class updateFieldsController {
                                                                                ,0); 
                                           sobj.put(field.SObjectField, timeChange); 
                                           } catch (Exception e) {
-                                              System.debug('Error for Time '+ e.getMessage());
+                                            return 'Error '+e.getMessage();
                                           } 
                                           // ---- jenish gangani for convert time 2/3/23
                             }
