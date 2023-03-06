@@ -81,17 +81,17 @@ export default class QuickBot extends LightningElement {
             this.email_msg = true;
             console.log('selectedValues:- ', this.quickbotemail);
             console.log('selectedValues:- ' + typeof this.quickbotemail);
+            const value = false;
+            const valueChangeEvent = new CustomEvent("valuechange", {
+              detail: { value }
+            });
+            // Fire the custom event
+            this.dispatchEvent(valueChangeEvent);
             sendemail({ name: this.quickbotname, email: this.quickbotemail, subject: this.quickbotsubject, body: this.quickbotmessage })
                 .then(result => {
                     this.emailsend = true;
                     this.dispatchEvent(new CustomEvent('botclose', { detail: this.emailsend }));
                     this.dispatchEvent(new CustomEvent('success'));
-                    const value = false;
-                    const valueChangeEvent = new CustomEvent("valuechange", {
-                      detail: { value }
-                    });
-                    // Fire the custom event
-                    this.dispatchEvent(valueChangeEvent);
                     console.log('send email', result);
                 }).catch(error => {
                     this.emailsend = false;

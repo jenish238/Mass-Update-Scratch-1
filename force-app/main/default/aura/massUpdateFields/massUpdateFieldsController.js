@@ -28,13 +28,7 @@
     },
 
     onChangeObject: function (component, event, helper) {
-        // component.set("v.IsSpinner", false);
-        // component.set("v.IsSpinner", true);
         helper.onChangeObject(component, event, helper);
-        console.log('onChangeObject in massUpdateFields');
-        // component.set("v.IsSpinner", false);
-
-
     },
     //    first next button
     callNexthandle: function (component, event, helper) {
@@ -247,7 +241,7 @@
         var nextStep = selectedStep == 'Step3' ? 'finished' : 'finished';
 
         if (nextStep == 'finished') {
-            helper.saveRecordsToSFForInsert(component, event, helper);
+            helper.saveRecordsToSFForToInsert(component, event, helper);
             component.set("v.currentStep", nextStep);
             component.set("v.finished", true);
         }
@@ -295,7 +289,6 @@
     handlefileValue: function (component, event, helper) {
         component.set("v.fileName", event.getParam('value'));
     },
-
     getValueFromLwc: function (component, event, helper) {
         component.set("v.inputValue", event.getParam('value'));
     },
@@ -303,4 +296,5 @@
         var q = !(component.get("v.inputValue"));
         component.set("v.inputValue", q);
     }
+
 })
