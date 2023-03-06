@@ -34,7 +34,6 @@ export default class new_upload_btn extends LightningElement {
                     }
                     //handle the message
                     if (message.data.name === "new_upload_btn") {
-                        console.log('event');
                         let fileName = message.data.finame;
                         this.fileName = message.data.finame;
                         this.sendFileName(this.fileName);
@@ -93,7 +92,6 @@ export default class new_upload_btn extends LightningElement {
         try {
             if (event.detail.files.length > 0) {
                 const file = event.detail.files[0];
-                // console.log('filesss' + JSON.stringify(file));
                 this.progress = 0;
                 let disableNext = false;
                 if (file.size > 3000000) {
@@ -157,17 +155,13 @@ export default class new_upload_btn extends LightningElement {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = event.target.result;
-                // console.log('data of xlsx==>' + data);
                 const workbook = XLSX.read(data, { type: 'binary' });
                 const sheetName = workbook.SheetNames[0];
                 let rowObject = XLSX.utils.sheet_to_csv(workbook.Sheets[sheetName], { defval: "" });
-                // console.log('data of rowobject==>' + JSON.stringify(rowObject));
                 var data1 = Papa.parse(rowObject, {
                     header: true,
                     skipEmptyLines: 'greedy'
                 });
-                // console.log('data1 ' + JSON.stringify(data1));
-                // var headerValue = Object.keys(rowObject[0]);
                 var headerValue = data1.meta.fields;
                 const rowData = data1.data;
                 // console.log('rowData' + JSON.stringify(rowData));
@@ -199,10 +193,8 @@ export default class new_upload_btn extends LightningElement {
             skipEmptyLines: 'greedy', // Add this line to skip empty lines
             complete: (results) => {
                 this._rows = results.data;
-                // console.log('results ', JSON.parse(JSON.stringify(results)));
                 this.loading = false;
                 let rowObj = results.data;
-                // console.log('rowobjec==>' + JSON.parse(JSON.stringify(rowObj)));
                 let headerName = results.meta.fields;
                 this.headerCheck(headerName);
                 this.dataStoreTable(rowObj);
@@ -217,16 +209,13 @@ export default class new_upload_btn extends LightningElement {
 
     headerCheck(headerName) {
         var trimrow = headerName;
-        console.log("trimRow=====" + trimrow);
-        console.log('trimrow' + trimrow.length);
+
         trimrow[trimrow.length - 1] = trimrow[trimrow.length - 1].replace(/(\r\n|\n|\r)/gm, "");
-        console.log('trimrow value:::', { trimrow });
 
         let newArray = trimrow.map(str => str.replace('"', ''));
         let newArray1 = newArray.map(str => str.replace('"', ''));
         let newArray2 = newArray1.map(str => str.replace(/\s/g, ''));
 
-        // console.log('newArray' + newArray2);
         trimrow = newArray2;
         console.log('new open :::' + trimrow);
 

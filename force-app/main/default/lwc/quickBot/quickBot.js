@@ -41,26 +41,20 @@ export default class QuickBot extends LightningElement {
     }
 
     renderedCallback() {
-        // console.log('print to list',this.listto);
         Promise.all([
             loadStyle(this, QuickBotCSS)
         ]).then(() => {
-            console.log('check');
         })
             .catch(error => {
-                // console.log( error.body.message );
             });
     }
     Quickbot_name(event) {
-        // console.log(event.target.value);
         this.quickbotname = event.target.value;
     }
     Quickbot_email(event) {
-        // console.log(event.target.value);
         this.quickbotemail = event.target.value;
     }
     Quickbot_message(event) {
-        // console.log(event.target.value);
         this.quickbotmessage = event.target.value;
     }
     Quickbot_subject(event) {
@@ -72,9 +66,7 @@ export default class QuickBot extends LightningElement {
         var validation = pattern.test(this.quickbotemail);
 
         if (validation == false) {
-            console.log('validation', validation);
             this.email_msg = false;
-            console.log('validation', validation);
         }
         else {
             console.log('validation', validation);
@@ -83,7 +75,7 @@ export default class QuickBot extends LightningElement {
             console.log('selectedValues:- ' + typeof this.quickbotemail);
             const value = false;
             const valueChangeEvent = new CustomEvent("valuechange", {
-              detail: { value }
+                detail: { value }
             });
             // Fire the custom event
             this.dispatchEvent(valueChangeEvent);
@@ -110,7 +102,7 @@ export default class QuickBot extends LightningElement {
         this.showComponent = !this.showComponent;
         const value = false;
         const valueChangeEvent = new CustomEvent("valuechange", {
-          detail: { value }
+            detail: { value }
         });
         // Fire the custom event
         this.dispatchEvent(valueChangeEvent);
