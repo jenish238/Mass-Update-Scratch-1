@@ -12,11 +12,11 @@
     <aura:attribute name="ObjectListMain" type="List" />
     <aura:attribute name="isSelectAll" type="boolean" default="false"/>
     <aura:attribute name="visibileInputBox" type="Boolean" default="false" />
-    <aura:attribute name="visibileButton" type="Boolean" default="true" />
-    <aura:attribute name="srno" type="Integer" />
+    <!-- <aura:attribute name="visibileButton" type="Boolean" default="true" /> -->
+    <!-- <aura:attribute name="srno" type="Integer" /> -->
     <aura:attribute name="currentStep" type="String" default="Step1" />  
     <aura:attribute name="finished" type="Boolean" default="false" />
-    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <!-- <aura:attribute name="showSpinner" type="Boolean" default="false" /> -->
     <aura:attribute name="tabledata" type="object[]" />
     <aura:attribute name="header" type="object[]" />
 
@@ -37,17 +37,17 @@
     <aura:attribute name="fieldTypeObj" type="object"/>
      <!--* Nishi Suthar 28/02/2023  -->
 
-    <aura:attribute name="allDataList" type="object[]" />
-    <aura:attribute name="addDeleteBoolean" type="boolean"  default="false"/>
+    <!-- <aura:attribute name="allDataList" type="object[]" /> -->
+    <!-- <aura:attribute name="addDeleteBoolean" type="boolean"  default="false"/> -->
     <aura:attribute name="tableListData" type="List"/>
-    <aura:attribute name="selectedFields" type="List"/>
+    <!-- <aura:attribute name="selectedFields" type="List"/> -->
     <aura:attribute name="ResultOfAllData" type="List"/>    
     <aura:attribute name="TableLightningData" type="List"/>
     <aura:attribute name="FieldToUpdateList" type="List"/>
     <aura:attribute name="updateFieldList" type="String" />
     <aura:attribute name="IsSpinner" type="Boolean" default="true"/>
     <aura:attribute name="sfId" type="Integer"/>
-    <aura:attribute name="EmailId" type="String" default="Email" />  
+    <!-- <aura:attribute name="EmailId" type="String" default="Email" />   -->
     <aura:attribute name="pageNumber" type="Integer" default="1"/>
     <aura:attribute name="pageSize" type="Integer" default="50"/>
     <aura:attribute name="totalPage" type="Integer" default="0"/>
@@ -157,7 +157,7 @@
                     <lightning:spinner variant="brand"  size="large" />
                 </aura:if> 
                 <lightning:card>
-                    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+                    <div onmouseleave="{!c.onblurMethod}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
                         <div class="slds-float_right" style="margin-right:1%">
                             <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
                                    <a onclick="{!c.openLWC}">Help?</a>
@@ -173,7 +173,7 @@
                             <div class="slds-float_right slds-col">
                                 <lightning:helptext content="Select your Operation."/>
                             </div>
-                            <lightning:select aura:id="select" name="select" label="Select a operation:" value="{!v.operation}" onchange="{! c.onChange }">
+                            <lightning:select aura:id="select" name="select" label="Select a operation:" value="{!v.operation}" onchange="{! c.onChangeOperation }">
                                 <!-- required="true" -->
                                         <option value="">choose one...</option>
                                         <option value="insert">insert</option>
@@ -245,7 +245,7 @@
                         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                             <thead>
                                 <tr>
-                                    <th>CSV Fields</th>
+                                    <th>CSV/Excel Fields</th>
                                     <th><div class="slds-align_absolute-center">Operator</div></th>
                                     <th>
                                         <div class="slds-grid slds-gutters">
@@ -296,7 +296,7 @@
                         <br/><br/>
                          
                         <!--Mapp Fileds-->
-                        <h1 style="font-size:18px"><b>CSV &amp; Salesforce Field Mapping:</b> 
+                        <h1 style="font-size:18px"><b>Field Mapping:</b> 
                             <aura:if isTrue="{!greaterthan(v.header.length,v.FieldToUpdateList.length)}">
                                 <div class="slds-float_right">Add MapFields&nbsp;&nbsp;
                                     <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addMapRow}"/>
@@ -308,7 +308,7 @@
                         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                             <thead>
                                 <tr>
-                                    <th>CSV Fields</th>
+                                    <th>CSV/Excel Fields</th>
                                     <th>Salesforce Fields</th>
                                     <th></th>
                                 </tr>
@@ -453,7 +453,7 @@
                                          <!-- {!v.currentStep} -->
                     <div class="slds-clearfix">
                         <div class="slds-page-header" role="banner">
-                            <div class="slds-float_left" style="display:inline-block;">   
+                            <div class="slds-float_left button-css" style="display:inline-block;">   
                            		<p class="slds-page-header__title">Page {!v.pageNumber} | Showing records from {! ((v.pageNumber-1)*v.pageSize+1)+' to '+(v.isLastPage == false ? ((v.pageNumber)*v.pageSize) : v.dataSize)} out of {!v.dataSize}</p>
                             </div>
                             <div style="display:inline-block;margin:0 10%;">
@@ -463,7 +463,7 @@
                                 <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
                                                   disabled="{! v.isLastPage}" onclick="{!c.nextPageRecord}"/>
                             </div>                            
-                            <div class="slds-float_right" style="display:inline-block;">      
+                            <div class="slds-float_right button-css" style="display:inline-block;">      
                                 <lightning:button variant="brand" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.PreviousStep2 }" /> 
                                 <aura:if isTrue="{!greaterthan(v.sfId,0)}">
                                     <lightning:button disabled="{!v.stepOneNextButton}" variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>

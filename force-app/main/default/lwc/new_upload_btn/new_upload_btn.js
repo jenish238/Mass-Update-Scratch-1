@@ -3,8 +3,6 @@ import { loadScript } from 'lightning/platformResourceLoader';
 import PARSER from '@salesforce/resourceUrl/PapaParse';
 import sheetjs from '@salesforce/resourceUrl/sheetjsNew';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getVFOrigin from '@salesforce/apex/URL_Controller.getVFOrigin';
-// import PageReference from '@salesforce/schema/PageReference';
 
 
 
@@ -15,54 +13,10 @@ export default class new_upload_btn extends LightningElement {
     @api progress;
     @api fileName;
 
+
+
     get acceptedFormats() {
         return ['.csv', '.xls', '.xlsx'];
-    }
-
-    connectedCallback() {
-        console.log('connected call back');
-        getVFOrigin()
-            .then(result => {
-                const updatedUrl = result.replace(".my.salesforce.com", ".vf.force.com");
-                const matchIndex = updatedUrl.indexOf("-ed");
-                var VfOrigin = updatedUrl.substring(0, matchIndex + 3) + "--c" + updatedUrl.substring(matchIndex + 3);
-                VfOrigin = 'https://mvclouds-dev-ed--mvmu.vf.force.com';
-                window.addEventListener("message", (message) => {
-                    if (message.origin !== VfOrigin) {
-                        //Not the expected origin
-                        return;
-                    }
-                    //handle the message
-                    if (message.data.name === "new_upload_btn") {
-                        let fileName = message.data.finame;
-                        this.fileName = message.data.finame;
-                        this.sendFileName(this.fileName);
-                        let extension = fileName.split('.').pop();
-
-                        if (extension == 'csv') {
-                            console.log('csv');
-                            var data1 = Papa.parse(message.data.payload, {
-                                header: true
-                            });
-                            this.progressBar();
-                            var headerValue = data1.meta.fields;
-                            var rowData = data1.data;
-                            this.headerCheck(headerValue);
-                            this.dataStoreTable(rowData);
-                        } else {
-                            console.log('xlsx');
-                            this.progressBar();
-                            var rowData = this.parseExcelFile(message.data.payload);
-                        }
-                    }
-                });
-
-                // return result;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
     }
 
     renderedCallback() {
@@ -87,8 +41,8 @@ export default class new_upload_btn extends LightningElement {
         }
     }
 
+
     handleUploadFinished(event) {
-        // Get the list of uploaded files
         try {
             if (event.detail.files.length > 0) {
                 const file = event.detail.files[0];
@@ -186,91 +140,104 @@ export default class new_upload_btn extends LightningElement {
     }
 
     CsvToJSON(file) {
-        this.loading = true;
-        Papa.parse(file, {
-            quoteChar: '"',
-            header: 'true',
-            skipEmptyLines: 'greedy', // Add this line to skip empty lines
-            complete: (results) => {
-                this._rows = results.data;
-                this.loading = false;
-                let rowObj = results.data;
-                let headerName = results.meta.fields;
-                this.headerCheck(headerName);
-                this.dataStoreTable(rowObj);
-            },
-            error: (error) => {
-                console.log('result --: ', { error });
-                console.error(error);
-                this.loading = false;
-            }
-        })
+        try {
+            this.loading = true;
+            Papa.parse(file, {
+                quoteChar: '"',
+                header: 'true',
+                skipEmptyLines: 'greedy', // Add this line to skip empty lines
+                complete: (results) => {
+                    this._rows = results.data;
+                    this.loading = false;
+                    let rowObj = results.data;
+                    let headerName = results.meta.fields;
+                    this.headerCheck(headerName);
+                    this.dataStoreTable(rowObj);
+                },
+                error: (error) => {
+                    console.log('result --: ', { error });
+                    console.error(error);
+                    this.loading = false;
+                }
+            })
+        } catch (error) {
+            console.log('error  of CsvToJSON ', error);
+        }
+
     }
 
     headerCheck(headerName) {
-        var trimrow = headerName;
+        try {
+            var trimrow = headerName;
 
-        trimrow[trimrow.length - 1] = trimrow[trimrow.length - 1].replace(/(\r\n|\n|\r)/gm, "");
+            trimrow[trimrow.length - 1] = trimrow[trimrow.length - 1].replace(/(\r\n|\n|\r)/gm, "");
 
-        let newArray = trimrow.map(str => str.replace('"', ''));
-        let newArray1 = newArray.map(str => str.replace('"', ''));
-        let newArray2 = newArray1.map(str => str.replace(/\s/g, ''));
+            trimrow = trimrow.map(str => str.replace('"', ''));
+            trimrow = trimrow.map(str => str.replace('"', ''));
+            trimrow = trimrow.map(str => str.replace(/\s/g, ''));
 
-        trimrow = newArray2;
-        console.log('new open :::' + trimrow);
+            console.log('new open :::' + trimrow);
 
-        if (trimrow.indexOf("") !== -1) {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Info',
-                    message: 'Please remove your extra collum',
-                    variant: 'Info',
-                }),
-            );
-            this.passEvent('true');
-        } else if (trimrow.indexOf("") == (trimrow.length - 1)) {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Info',
-                    message: 'Please remove your duplicat [] collum',
-                    variant: 'Info',
-                }),
-            );
-            this.passEvent('true');
+            if (trimrow.indexOf("") !== -1) {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Info',
+                        message: 'Please remove your extra column',
+                        variant: 'Info',
+                    }),
+                );
+                this.passEvent('true');
+            } else if (trimrow.indexOf("") == (trimrow.length - 1)) {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Info',
+                        message: 'Please remove your duplicate [] column',
+                        variant: 'Info',
+                    }),
+                );
+                this.passEvent('true');
 
+            }
+            else if (checkIfDuplicateExists(trimrow)) {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Info',
+                        message: 'Please delete the same header api name.',
+                        variant: 'Info',
+                    }),
+                );
+                this.passEvent('true');
+
+            } else {
+                this.passEvent('false');
+            }
+
+            function checkIfDuplicateExists(arr) {
+                return new Set(arr).size != arr.length;
+            }
+            let value = trimrow;
+            const event = new CustomEvent('header', { detail: { value } });
+            this.dispatchEvent(event);
+
+        } catch (error) {
+            console.log('error ' + error);
         }
-        else if (checkIfDuplicateExists(trimrow)) {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Info',
-                    message: 'Please remove same api Name in Header',
-                    variant: 'Info',
-                }),
-            );
-            this.passEvent('true');
 
-        } else {
-            this.passEvent('false');
-        }
-
-        function checkIfDuplicateExists(arr) {
-            return new Set(arr).size != arr.length;
-        }
-        let value = trimrow;
-        const event = new CustomEvent('header', { detail: { value } });
-        this.dispatchEvent(event);
 
     }
     dataStoreTable(rowObj) {
-        var arr2 = [];
-        for (let i = 0; i < rowObj.length; i++) {
-            arr2.push(Object.values(rowObj[i]));
+        try {
+            var arr2 = [];
+            for (let i = 0; i < rowObj.length; i++) {
+                arr2.push(Object.values(rowObj[i]));
+            }
+            let value = arr2.map(subarray => subarray.join(','));
+            const event = new CustomEvent('tabledata', { detail: { value } });
+            this.dispatchEvent(event);
+        } catch (error) {
+            console.log('error ' + error);
         }
-        // console.log('arr2 Name ' + arr2);
-        const newArray = arr2.map(subarray => subarray.join(','));
-        let value = newArray;
-        const event = new CustomEvent('tabledata', { detail: { value } });
-        this.dispatchEvent(event);
+
 
     }
 
@@ -288,8 +255,6 @@ export default class new_upload_btn extends LightningElement {
                     header: true,
                     skipEmptyLines: 'greedy'
                 });
-                // console.log('data1 ' + JSON.stringify(data1));
-                // var headerValue = Object.keys(rowObject[0]);
                 var headerValue = data1.meta.fields;
                 const rowData = data1.data;
                 this.headerCheck(headerValue);

@@ -29,16 +29,32 @@ public with sharing class updateFieldsController {
         String email = UserInfo.getUserEmail();
         System.debug('User Info===='+email);
         return email;
-    }    
+    }  
+    
+    @AuraEnabled
+    public static void WorkSpace(){
+           List<ContentWorkspace> ws = [SELECT Id, RootContentFolderId FROM ContentWorkspace WHERE Name = 'Mass Update' LIMIT 1];
+           System.debug('WorkSpace');
+        if(ws.isEmpty()){
+            ContentWorkspace wsf = new ContentWorkspace();
+            wsf.Name = 'Mass Update';
+            try{
+                insert wsf;                                 
+            }catch(Exception e){
+                // Folder Existed
+            }
+        }
+      
+    }
     
     //Getting fields from salesforce using ObjectName
     @AuraEnabled
-    public static List<pairWrapper1> getObjectSelectField(String ObjectName){
+    public static pairWrapperNew getObjectSelectField(String ObjectName){
         if(ObjectName == ''){
             return null;
         }
         List<pairWrapper> lstfieldname = new List<pairWrapper>();
-        List<pairWrapper1> apiNameAndList = new List<pairWrapper1>(); 
+        pairWrapperNew pairWrapperObj = new pairWrapperNew(); 
         List<String> apiList = new List<String>();
         List<String> labelList = new List<String>();
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(ObjectName).getDescribe().fields.getMap();
@@ -61,36 +77,33 @@ public with sharing class updateFieldsController {
                  labelList.add((dfield.getLabel()).toUpperCase());
 
 
-                if(field.apiName == 'Id'){
-                    lstfieldname.add(field);
-                }else if(dfield.isUpdateable() == true){
+                if((field.apiName == 'Id') || (dfield.isUpdateable() == true) ){
                     lstfieldname.add(field);
                 }
+                // else if(dfield.isUpdateable() == true){
+                //     lstfieldname.add(field);
+                // }
             }
         }
-        pairWrapper1 field1 = new pairWrapper1();
-
-        Map<String, Schema.SObjectField> fieldMap12 = Schema.getGlobalDescribe().get(ObjectName).getDescribe().fields.getMap();
+        
+        Map<String, Schema.SObjectField> fieldMapNew = Schema.getGlobalDescribe().get(ObjectName).getDescribe().fields.getMap();
         
         map<string,string> newMap= new Map<string,string>();
         
-        for(String strKey: fieldMap12.keyset()) {
+        for(String strKey: fieldMapNew.keyset()) {
             newMap.put(strKey, String.valueof(fieldMap.get(strKey)));
         }
-
+        // pairWrapperNew fieldNew = new pairWrapperNew();
         
-        Schema.SObjectType sobj12 = Schema.getGlobalDescribe().get(ObjectName);
-        SObject sobj = sobj12.newSObject();
-
-        field1.pairWrapperList = lstfieldname;
-        field1.apiNameList = apiList;
-        field1.fieldMap1 = newMap;
-        field1.labelNameList = labelList;
-        apiNameAndList.add(field1);
-        System.debug('apinameeee:::'+ apiNameAndList);
+        pairWrapperObj.pairWrapperList = lstfieldname;
+        pairWrapperObj.apiNameList = apiList;
+        pairWrapperObj.fieldMap1 = newMap;
+        pairWrapperObj.labelNameList = labelList;
+        // apiNameAndList.add(fieldNew);
+        System.debug('apinameeee:::'+ pairWrapperObj);
 
         // return lstfieldname;
-        return apiNameAndList;
+        return pairWrapperObj;
     }
     // to Insert jenish gangani 10/2 show in datatable of data
     @AuraEnabled
@@ -105,10 +118,10 @@ public with sharing class updateFieldsController {
 
         Map<String, Integer> IndexFieldCSV = new Map<String, Integer>();
         
-        Integer x = 0;
+        Integer index = 0;
         for(String s : headerData){
-            IndexFieldCSV.put(s, x);
-            x++;
+            IndexFieldCSV.put(s, index);
+            index++;
         }
 
         System.debug('IndexFieldCSV::::::'+ IndexFieldCSV);
@@ -120,23 +133,21 @@ public with sharing class updateFieldsController {
         Map<String,Map<String,String>>  csvAllDataMap   = new Map<String,Map<String,String>>();
         
       
-        List<String> mnList = new List<String>();
-        Integer j = 0;
+        Integer indexofInsert = 0;
         
         String strKey;
         Map<String,String> strValue = new Map<String,String>(); 
-        Integer k = 0;
         SObjectType r = ((SObject)(Type.forName('Schema.'+selectObjectName).newInstance())).getSObjectType();
    		DescribeSObjectResult d = r.getDescribe();
         //Getting CSV data and storing it into *csvAllDataMap* map
         for(String data : dataList){
             strKey = ''; 
             strValue = new Map<String, String>();
-            k = 0;
             data=data.trim(); 
             if(data != ''){  
-                if(data.endsWith(',')) data += ' ';
-                
+                if(data.endsWith(',')) {
+                    data += ' ';
+                }
                 List<String> StringData = data.split(',(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)');
                
 
@@ -151,27 +162,18 @@ public with sharing class updateFieldsController {
                         }                       
                     }
                 }
-                String sInteger = String.valueOf(j);
+                String sInteger = String.valueOf(indexofInsert);
                 csvAllDataMap.put(sInteger, strValue);
                
             }
          
-             j++;
+             indexofInsert++;
 
         }
         
         
-        
-        List<ContentWorkspace> ws = [SELECT Id, RootContentFolderId FROM ContentWorkspace WHERE Name = 'Mass Update' LIMIT 1];
-        if(ws.isEmpty()){
-            ContentWorkspace wsf = new ContentWorkspace();
-            wsf.Name = 'Mass Update';
-            try{
-                insert wsf;                                 
-            }catch(Exception e){
-                // Folder Existed
-            }
-        }
+        WorkSpace();
+     
         System.debug('275=====>'+csvAllDataMap);
         return csvAllDataMap;
     }
@@ -180,7 +182,7 @@ public with sharing class updateFieldsController {
         //  Get the csv data and make query for getting salesforce data
 
       @AuraEnabled
-    public static List<wrapDataList> setQuery(List<String> selectedListOfFields,String selectObjectName,List<String> headerData,String tableData,String tablePushDataListJson, String FieldToUpdateList, String keyValueMap, String csvAllDataMap){
+    public static wrapDataList setQuery(List<String> selectedListOfFields,String selectObjectName,List<String> headerData,String tableData,String tablePushDataListJson, String FieldToUpdateList, String keyValueMap, String csvAllDataMap){
         
        System.debug('Set query called==============');
         System.debug('selectedListOfFields===='+selectedListOfFields);
@@ -251,9 +253,9 @@ public with sharing class updateFieldsController {
         
         //Showing the fields which data have to Showing from salesforce
         if(selectedListOfFields != null && selectedListOfFields.size() > 0){
-            for(String fd : selectedListOfFields){
-                if(!listSql.contains(fd)){
-                    listSql.add(fd);
+            for(String selectFieldOfCheckBox : selectedListOfFields){
+                if(!listSql.contains(selectFieldOfCheckBox)){
+                    listSql.add(selectFieldOfCheckBox);
                 }
             }
         }
@@ -298,21 +300,15 @@ public with sharing class updateFieldsController {
             i++;
         }
         
-        List<ContentWorkspace> ws = [SELECT Id, RootContentFolderId FROM ContentWorkspace WHERE Name = 'Mass Update' LIMIT 1];
-        if(ws.isEmpty()){
-            ContentWorkspace wsf = new ContentWorkspace();
-            wsf.Name = 'Mass Update';
-            try{
-                insert wsf;                                 
-            }catch(Exception e){
-                // Folder Existed
-            }
-        }
+        WorkSpace();
         
-        List<wrapDataList> listData = new List<wrapDataList>();
-        listData.add(new wrapDataList(soqlQuer, dataObj));
-        System.debug('ListData====='+listData);
-        return listData;
+        // List<wrapDataList> listData = new List<wrapDataList>();
+        wrapDataList pairWrapperObj = new wrapDataList();
+         pairWrapperObj.theQuery = soqlQuer;
+         pairWrapperObj.theMap = dataObj;
+        // listData.add(new wrapDataList(soqlQuer, dataObj));
+        // System.debug('ListData====='+listData);
+        return pairWrapperObj;
     }
     
     
@@ -337,13 +333,15 @@ public with sharing class updateFieldsController {
 
         	
       
-        if(!selectedListOfFields.contains('Id'))    selectedListOfFields.add('Id');
+        if(!selectedListOfFields.contains('Id')){  
+             selectedListOfFields.add('Id');
+        }
         
         Map<String, Integer> IndexFieldCSV = new Map<String, Integer>();
-        Integer x = 0;
+        Integer index = 0;
         for(String s : headerData){
-            IndexFieldCSV.put(s, x);
-            x++;
+            IndexFieldCSV.put(s, index);
+            index++;
         }
         try {
             List<SObject> SObjectList = database.query(query);  
@@ -396,6 +394,7 @@ public with sharing class updateFieldsController {
                     csvData.put(str,lstStr);
                 }
             }
+
         } catch (Exception e) {
             System.debug('Error ' + e.getMessage() + e.getLineNumber());
         }
@@ -478,7 +477,8 @@ public with sharing class updateFieldsController {
             }
         }
         System.debug('objList===>645===>'+ objList);
-        return JSON.serialize(objList);
+        String objListValue = JSON.serialize(objList);
+        return objListValue;
     }
 
     // --------- jenish gangani 11/02 convert Sobject
@@ -606,13 +606,12 @@ public with sharing class updateFieldsController {
         @AuraEnabled public String refrence{get; set;}
         @AuraEnabled public String formulaField{get; set;}
         @AuraEnabled public String relationshipName{get; set;}
-        @AuraEnabled public String NotUpdatable{get; set;}
 
     }
 
 
     // -----------jenish gangani
-public class pairWrapper1{
+public class pairWrapperNew{
         @AuraEnabled public List<string> apiNameList{get; set;}
         @AuraEnabled public List<string> labelNameList{get; set;}
         @AuraEnabled public List<pairWrapper> pairWrapperList{get; set;}
@@ -631,21 +630,21 @@ public class pairWrapper1{
         @AuraEnabled public String theQuery{get;set;}
         @AuraEnabled public Map<String,Map<String,String>> theMap{get;set;}
         
-        public wrapDataList(String theQuery, Map<String,Map<String,String>> theMap){
-            this.theQuery   = theQuery;
-            this.theMap    = theMap;
-        }
+        // public wrapDataList(String theQuery, Map<String,Map<String,String>> theMap){
+        //     this.theQuery   = theQuery;
+        //     this.theMap    = theMap;
+        // }
     }
     
-    public class wrapDataSecond{
-        @AuraEnabled public List<SObject> theList{get;set;}
-        @AuraEnabled public Map<String,Map<String,String>> theMap{get;set;}
+    // public class wrapDataSecond{
+    //     @AuraEnabled public List<SObject> theList{get;set;}
+    //     @AuraEnabled public Map<String,Map<String,String>> theMap{get;set;}
         
-        public wrapDataSecond(List<SObject> theList, Map<String,Map<String,String>> theMap){
-            this.theList   = theList;
-            this.theMap    = theMap;
-        }
-    }
+    //     public wrapDataSecond(List<SObject> theList, Map<String,Map<String,String>> theMap){
+    //         this.theList   = theList;
+    //         this.theMap    = theMap;
+    //     }
+    // }
     // ---------jenish gangani 2/3/23
     @AuraEnabled
     public static Void sendemail(String name, String email, String subject, String body){

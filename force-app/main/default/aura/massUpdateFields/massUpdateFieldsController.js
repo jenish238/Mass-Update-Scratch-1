@@ -1,5 +1,5 @@
 ({
-    onChange: function (component, event, helper) {
+    onChangeOperation: function (component, event, helper) {
         component.set("v.operation", component.find('select').get('v.value'));
     },
     doinit: function (component, event, helper) {
@@ -9,22 +9,22 @@
         component.set("v.IsSpinner", false);
 
     },
-    onblur: function (component, event, helper) {
-        component.set("v.listOfSearchRecords", null);
+    onblurMethod: function (component, event, helper) {
+        // component.set("v.listOfSearchRecords", null);
         var forclose = component.find("searchRes");
         $A.util.addClass(forclose, 'slds-is-close');
         $A.util.removeClass(forclose, 'slds-is-open');
     },
 
     // function for clear the Record Selection 
-    clear: function (component, event, helper) {
-        helper.clear(component, event, helper);
-    },
+    // clear: function (component, event, helper) {
+    //     helper.clear(component, event, helper);
+    // },
 
     // This function call when the end User Select any record from the result list.   
-    handleComponentEvent: function (component, event, helper) {
-        helper.handleComponentEvent(component, event, helper);
-    },
+    // handleComponentEvent: function (component, event, helper) {
+    //     helper.handleComponentEvent(component, event, helper);
+    // },
 
     onChangeObject: function (component, event, helper) {
         helper.onChangeObject(component, event, helper);
@@ -38,38 +38,38 @@
         helper.onSelectAllChange(component, event, helper);
     },
 
-    dragAndDropBar: function (component, event, helper) {
-        var selectedStep2 = event.getSource().get("v.value");
-        var nextStep = 'Step1';
+    // dragAndDropBar: function (component, event, helper) {
+    //     var selectedStep2 = event.getSource().get("v.value");
+    //     var nextStep = 'Step1';
 
-        if (nextStep == 'finished') {
-            component.set("v.finished", nextStep);
-        } else {
-            component.set("v.currentStep", nextStep);
-        }
-    },
+    //     if (nextStep == 'finished') {
+    //         component.set("v.finished", nextStep);
+    //     } else {
+    //         component.set("v.currentStep", nextStep);
+    //     }
+    // },
 
-    mapFieldBar: function (component, event, helper) {
-        var selectedStep2 = event.getSource().get("v.value");
-        var nextStep = 'Step2';
+    // mapFieldBar: function (component, event, helper) {
+    //     var selectedStep2 = event.getSource().get("v.value");
+    //     var nextStep = 'Step2';
 
-        if (nextStep == 'finished') {
-            component.set("v.finished", nextStep);
-        } else {
-            component.set("v.currentStep", nextStep);
-        }
-    },
+    //     if (nextStep == 'finished') {
+    //         component.set("v.finished", nextStep);
+    //     } else {
+    //         component.set("v.currentStep", nextStep);
+    //     }
+    // },
 
-    updateFieldBar: function (component, event, helper) {
-        var selectedStep3 = event.getSource().get("v.value");
-        var nextStep = 'Step3';
+    // updateFieldBar: function (component, event, helper) {
+    //     var selectedStep3 = event.getSource().get("v.value");
+    //     var nextStep = 'Step3';
 
-        if (nextStep == 'finished') {
-            component.set("v.finished", nextStep);
-        } else {
-            component.set("v.currentStep", nextStep);
-        }
-    },
+    //     if (nextStep == 'finished') {
+    //         component.set("v.finished", nextStep);
+    //     } else {
+    //         component.set("v.currentStep", nextStep);
+    //     }
+    // },
 
     previousClikButton: function (component, event, helper) {
         console.log('previousClikButton');
@@ -93,10 +93,7 @@
         if (nextStep == 'finished') {
             component.set("v.finished", nextStep);
         } else {
-            // --------------------------------------------------------- jenish gangani
-
             helper.deleteRowRecord(component, event, helper);
-            // --------------------------------------------------------- jenish gangani
             component.set("v.currentStep", nextStep);
 
         }
