@@ -128,7 +128,7 @@
             </article><br/>     
             
             <aura:if isTrue="{!v.toastMsg != null}">
-                <div class="demo-only" style="height: 4rem;" id='ToastMessage'>
+                <div class="demo-only" id='ToastMessage'>
                     <div class="slds-notify_container slds-is-relative">
                         <div class="{!v.toastMsg == 'success' ? 'slds-notify slds-notify_toast slds-theme_success' : v.toastMsg == 'Info' ? 'slds-notify slds-notify_toast slds-theme_info' : 'slds-notify slds-notify_toast slds-theme_error' }" role="alert">                            
                             <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="">
@@ -158,7 +158,7 @@
                 </aura:if> 
                 <lightning:card>
                     <div onmouseleave="{!c.onblurMethod}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
-                        <div class="slds-float_right" style="margin-right:1%">
+                        <div class="slds-float_right operation">
                             <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
                                    <a onclick="{!c.openLWC}">Help?</a>
                                    <aura:if isTrue="{!v.inputValue == true}">
@@ -167,7 +167,7 @@
                             </div>
                             <br/>
                         </div>
-                        <div class="slds-p-around_medium" style="width:70%;margin-left:15%;">
+                        <div class="slds-p-around_medium operation2">
                             
                             <!-- jenish gangani 8/2/23 -->
                             <div class="slds-float_right slds-col">
@@ -189,7 +189,7 @@
                             <div class="slds-float_right slds-col">
                                 <lightning:helptext content="Type your object name to find it quickly."/>
                             </div>
-                            <div style="margin-bottom: 10px;">
+                            <div class="objectList">
                                 <lightning:select name="lookupField" label="Select Object:" aura:id="lookupField" value="{!v.selectedObject}" onchange="{!c.onChangeObject}">
                                     <option value="">choose one...</option>
                                     <aura:iteration items="{!v.ObjectListMain}" var="option">
@@ -216,7 +216,7 @@
                     <lightning:spinner variant="brand"  size="large" />
                 </aura:if>
                 <lightning:card>
-                    <div class="slds-float_right" style="margin-right:1%">
+                    <div class="slds-float_right helpButton">
                         <div class="slds-float_right" onclick="{!c.showSelectObjectHelp}">
                             <!-- <a>Help?</a> -->
                             <a onclick="{!c.openLWC}">Help?</a>
@@ -230,10 +230,10 @@
 
                     <!-- 8/2/23   jenish ganagani -->
                    
-                    <div class="slds-p-around--medium" style="width:70%;margin-left:15%;">  
+                    <div class="slds-p-around--medium Matching" >  
                         <!-- insert and update condition -->
                         <aura:if isTrue="{!v.operation=='update'}">               
-                        <h1 style="font-size:18px"><b>Data Matching Criteria:</b>
+                        <h1 class="Data_Matching_Criteria" ><b>Data Matching Criteria:</b>
                             <aura:if isTrue="{!greaterthan(v.header.length,v.tableListData.length)}">
                                 <div class="slds-float_right">Add Fields&nbsp;&nbsp;
                                     <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addRow}"/>
@@ -260,7 +260,7 @@
                             <aura:iteration items="{!v.tableListData}" var="data" indexVar="index">  
                                 <tbody>                                    
                                     <tr>
-                                        <td style="width: 30%;">        
+                                        <td class="tabel">        
                                             <lightning:select aura:id="selectDropValues" name="csvHeaderKey" value="{!data.csvfield}" messageWhenValueMissing="Please Select this field" required="true" >
                                                 <option value="">choose one...</option>                                                
                                                 <aura:iteration items="{!v.header}" var="row"> 
@@ -269,7 +269,7 @@
                                             </lightning:select>
                                         </td>
                                         <td>
-                                            <div class="slds-align_absolute-center"><b style="font-size: x-large;">=</b></div>
+                                            <div class="slds-align_absolute-center"><b class="btage">=</b></div>
                                         </td>
                                         <td>
                                             <lightning:select aura:id="selectDropValues" name="SObjectSelectedFields" messageWhenValueMissing="Please Select this field" required="true" value="{!data.SObjectField}">
@@ -296,7 +296,7 @@
                         <br/><br/>
                          
                         <!--Mapp Fileds-->
-                        <h1 style="font-size:18px"><b>Field Mapping:</b> 
+                        <h1 class="Data_Matching_Criteria" ><b>Field Mapping:</b> 
                             <aura:if isTrue="{!greaterthan(v.header.length,v.FieldToUpdateList.length)}">
                                 <div class="slds-float_right">Add MapFields&nbsp;&nbsp;
                                     <lightning:buttonIcon iconName="utility:add"  size="large" variant="bare" alternativeText="Add" onclick="{!c.addMapRow}"/>
@@ -316,7 +316,7 @@
                             <tbody>
                                 <aura:iteration items="{!v.FieldToUpdateList}" var="row" indexVar="int">
                                     <tr>
-                                        <td style="width: 30%;">
+                                        <td class="tabel">
                                             <lightning:select aura:id="selectDropValues" name="mapheader" value="{!row.csvfield}" onchange="{!c.PickListSelect}" messageWhenValueMissing="Please Select this field" required="true">
                                                 <option value="">choose one...</option>
                                                 <aura:iteration items="{!v.header}" var="hed">
@@ -324,7 +324,7 @@
                                                 </aura:iteration>
                                             </lightning:select>  
                                         </td>
-                                        <td style="width: 60%;">
+                                        <td class="tabel2">
                                             <lightning:select name="mapSObjectSelectedFields1" aura:id="selectDropValues" value="{!row.SObjectField}" messageWhenValueMissing="Please Select this field" required="true">
                                                 <option value="">choose one...</option>
                                                 <aura:iteration items="{!v.fieldList}" var="fl">
@@ -342,7 +342,7 @@
                         </table><br/><br/>
                         <!-- Salesofrce Selected Object Fileds List -->
                         <aura:if  isTrue="{!v.operation=='update'}">
-                        <h1 style="font-size:18px"><b>Display Salesforce fields:</b></h1><br/>
+                        <h1 class="sFields" ><b>Display Salesforce fields:</b></h1><br/>
                         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                             <thead>
                                 <tr>  
@@ -423,18 +423,18 @@
                 <lightning:spinner variant="brand"  size="large" />
             </aura:if>
             <lightning:card>   
-                <div class="slds-p-around--medium" style="width:80%;margin-left:10%;">
+                <div class="slds-p-around--medium tabelPage">
                     <!-- {!v.ResultOfAllData.length} -->
                     
                     <table>
                         <tr>
-                            <td style="float:right">
-                                <div style="height: 20px;width: 20px;margin:3px;background-color: #c0d1f5;"><b style="padding-left: 22px;">SalesForceFields</b></div>
+                            <td class="SFTabel">
+                                <div class="SFInerTabel"><b class="SFInerOne">SalesForceFields</b></div>
                             </td>
                         </tr>
                         <tr>
-                            <td style="float:right">
-                                <div style="height: 20px;width: 20px;margin:3px;background-color: #ecbbd9;"><b style="padding-left: 22px;">CSVFields</b></div>
+                            <td class="CSVTabel">
+                                <div class="CSVInerTabel"><b style="padding-left: 22px;">CSVFields</b></div>
                             </td>
                         </tr>
                     </table>
@@ -453,7 +453,7 @@
                                          <!-- {!v.currentStep} -->
                     <div class="slds-clearfix">
                         <div class="slds-page-header" role="banner">
-                            <div class="slds-float_left button-css" style="display:inline-block;">   
+                            <div class="slds-float_left button-css">   
                            		<p class="slds-page-header__title">Page {!v.pageNumber} | Showing records from {! ((v.pageNumber-1)*v.pageSize+1)+' to '+(v.isLastPage == false ? ((v.pageNumber)*v.pageSize) : v.dataSize)} out of {!v.dataSize}</p>
                             </div>
                             <div style="display:inline-block;margin:0 10%;">
@@ -463,7 +463,7 @@
                                 <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
                                                   disabled="{! v.isLastPage}" onclick="{!c.nextPageRecord}"/>
                             </div>                            
-                            <div class="slds-float_right button-css" style="display:inline-block;">      
+                            <div class="slds-float_right button-css">      
                                 <lightning:button variant="brand" value="{!v.currentStep}" label="Previous" title="Previous" onclick="{! c.PreviousStep2 }" /> 
                                 <aura:if isTrue="{!greaterthan(v.sfId,0)}">
                                     <lightning:button disabled="{!v.stepOneNextButton}" variant="brand" value="{!v.currentStep}" label="Update" title="Update" onclick="{! c.saveRecordsToSF }"/>

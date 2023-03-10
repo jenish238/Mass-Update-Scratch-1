@@ -54,7 +54,7 @@ export default class QuickBot extends LightningElement {
     }
     Quickbot_name(event) {
         this.quickbotname = event.target.value;
-       this.name_msg = true;
+        this.name_msg = true;
     }
     Quickbot_email(event) {
         this.quickbotemail = event.target.value;
@@ -74,26 +74,20 @@ export default class QuickBot extends LightningElement {
     quickbot_Submit() {
         var pattern = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         var validation = pattern.test(this.quickbotemail);
-        console.log(this.quickbotname);
-        console.log(this.quickbotemail);
-        console.log(this.quickbotmessage);
-        console.log(this.quickbotsubject);
 
-        if(this.quickbotname == undefined){
+
+        if (this.quickbotname == undefined) {
             this.name_msg = false;
         }
-         else if (validation == false) {
+        else if (validation == false) {
             this.email_msg = false;
-        }else if(this.quickbotsubject == undefined){
+        } else if (this.quickbotsubject == undefined) {
             this.subject_msg = false;
         }
-      else if(this.quickbotmessage == undefined){
+        else if (this.quickbotmessage == undefined) {
             this.Message_msg = false;
-        }  else {
-            console.log('validation', validation);
+        } else {
             this.email_msg = true;
-            console.log('selectedValues:- ', this.quickbotemail);
-            console.log('selectedValues:- ' + typeof this.quickbotemail);
             const value = false;
             const valueChangeEvent = new CustomEvent("valuechange", {
                 detail: { value }
@@ -105,18 +99,13 @@ export default class QuickBot extends LightningElement {
                     this.emailsend = true;
                     this.dispatchEvent(new CustomEvent('botclose', { detail: this.emailsend }));
                     this.dispatchEvent(new CustomEvent('success'));
-                    console.log('send email', result);
                 }).catch(error => {
                     this.emailsend = false;
                     this.dispatchEvent(new CustomEvent('botclose', { detail: this.emailsend }));
                     this.dispatchEvent(new CustomEvent('error'));
-                    console.log('Send Email Error ==>', error);
                 });
         }
-        console.log('quickbotname -->', this.quickbotname);
-        console.log('quickbotemail -->', this.quickbotemail);
-        console.log('quickbotmessage -->', this.quickbotmessage);
-        console.log('quickbotsubject -->', this.quickbotsubject);
+
     }
 
     quickboe_close(event) {

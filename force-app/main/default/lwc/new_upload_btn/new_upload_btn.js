@@ -22,29 +22,26 @@ export default class new_upload_btn extends LightningElement {
     renderedCallback() {
         try {
             if (!this.parserInitialized) {
-                console.log('2nd steps in IF', this.parserInitialized);
                 Promise.all([
                     loadScript(this, PARSER + '/PapaParse/papaparse.js'),
                     loadScript(this, sheetjs + '/sheetjs/xlsx.full.min.js'),
                 ])
                     .then(() => {
-                        console.log('script loaded', XLSX.version);
                         this.parserInitialized = true;
                     })
                     .catch(error => {
-                        console.log('in catch ', error);
                         console.error(error)
                     });
             }
         } catch (error) {
-            console.log('error mesg--> ' + error);
         }
     }
 
 
     handleUploadFinished(event) {
         try {
-            if (event.detail.files.length > 0) {
+            let filelength = event.detail.files.length;
+            if (filelength > 0) {
                 const file = event.detail.files[0];
                 this.progress = 0;
                 let disableNext = false;
@@ -57,7 +54,7 @@ export default class new_upload_btn extends LightningElement {
                             variant: 'Info',
                         }),
                     );
-                } else if (event.detail.files.length > 1) {
+                } else if (filelength > 1) {
                     this.dispatchEvent(
                         new ShowToastEvent({
                             title: 'Select One file',
@@ -105,7 +102,6 @@ export default class new_upload_btn extends LightningElement {
 
     ExcelToJSON(file) {
         try {
-            console.log(file);
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = event.target.result;
@@ -118,7 +114,6 @@ export default class new_upload_btn extends LightningElement {
                 });
                 var headerValue = data1.meta.fields;
                 const rowData = data1.data;
-                // console.log('rowData' + JSON.stringify(rowData));
                 this.headerCheck(headerValue);
                 this.dataStoreTable(rowData);
             };
@@ -135,7 +130,6 @@ export default class new_upload_btn extends LightningElement {
             };
             reader.readAsBinaryString(file);
         } catch (error) {
-            console.log('error except ', error);
         }
     }
 
@@ -155,13 +149,11 @@ export default class new_upload_btn extends LightningElement {
                     this.dataStoreTable(rowObj);
                 },
                 error: (error) => {
-                    console.log('result --: ', { error });
                     console.error(error);
                     this.loading = false;
                 }
             })
         } catch (error) {
-            console.log('error  of CsvToJSON ', error);
         }
 
     }
@@ -176,7 +168,6 @@ export default class new_upload_btn extends LightningElement {
             trimrow = trimrow.map(str => str.replace('"', ''));
             trimrow = trimrow.map(str => str.replace(/\s/g, ''));
 
-            console.log('new open :::' + trimrow);
 
             if (trimrow.indexOf("") !== -1) {
                 this.dispatchEvent(
@@ -220,7 +211,6 @@ export default class new_upload_btn extends LightningElement {
             this.dispatchEvent(event);
 
         } catch (error) {
-            console.log('error ' + error);
         }
 
 
@@ -235,14 +225,12 @@ export default class new_upload_btn extends LightningElement {
             const event = new CustomEvent('tabledata', { detail: { value } });
             this.dispatchEvent(event);
         } catch (error) {
-            console.log('error ' + error);
         }
 
 
     }
 
     parseExcelFile(filedata) {
-        console.log('1st line', filedata);
         try {
             const reader = new FileReader();
             reader.readAsArrayBuffer(filedata);
@@ -250,7 +238,6 @@ export default class new_upload_btn extends LightningElement {
                 const binaryData = reader.result;
                 const workbook = XLSX.read(binaryData, { type: 'binary' });
                 const csvDataString = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
-                // console.log('data converted to csv ' + csvDataString);
                 var data1 = Papa.parse(csvDataString, {
                     header: true,
                     skipEmptyLines: 'greedy'
@@ -261,7 +248,6 @@ export default class new_upload_btn extends LightningElement {
                 this.dataStoreTable(rowData);
             };
         } catch (error) {
-            console.log('error ' + error);
         }
     }
     progressBar() {
@@ -284,8 +270,8 @@ export default class new_upload_btn extends LightningElement {
     }
     sendFileName(filName) {
         let value = filName;
-        const event1 = new CustomEvent('filevalue', { detail: { value } });
-        this.dispatchEvent(event1);
+        const event = new CustomEvent('filevalue', { detail: { value } });
+        this.dispatchEvent(event);
     }
 
 }

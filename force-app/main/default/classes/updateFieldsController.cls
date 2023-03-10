@@ -19,7 +19,6 @@ public with sharing class updateFieldsController {
                 sObjectList.add(sObj.getDescribe().getName()+','+sObj.getDescribe().getLabel());
             }
         }
-        System.debug('obects===='+sObjectList);
         return sObjectList;
     }
     
@@ -27,14 +26,12 @@ public with sharing class updateFieldsController {
 	@AuraEnabled(cacheable=true)
     public static String getEmail() {    
         String email = UserInfo.getUserEmail();
-        System.debug('User Info===='+email);
         return email;
     }  
     
     @AuraEnabled
     public static void WorkSpace(){
            List<ContentWorkspace> ws = [SELECT Id, RootContentFolderId FROM ContentWorkspace WHERE Name = 'Mass Update' LIMIT 1];
-           System.debug('WorkSpace');
         if(ws.isEmpty()){
             ContentWorkspace wsf = new ContentWorkspace();
             wsf.Name = 'Mass Update';
@@ -99,13 +96,8 @@ public with sharing class updateFieldsController {
         pairWrapperObj.apiNameList = apiList;
         pairWrapperObj.fieldMap1 = newMap;
         pairWrapperObj.labelNameList = labelList;
-        // apiNameAndList.add(fieldNew);
-        System.debug('apinameeee:::'+ pairWrapperObj);
-
-        // return lstfieldname;
         return pairWrapperObj;
     }
-    // to Insert jenish gangani 10/2 show in datatable of data
     @AuraEnabled
     public static  Map<String,Map<String,String>> setInsertQuery(List<String> selectedListOfFields,String selectObjectName,List<String> headerData,String tableData,String tablePushDataListJson, String FieldToUpdateList){
         
@@ -124,7 +116,6 @@ public with sharing class updateFieldsController {
             index++;
         }
 
-        System.debug('IndexFieldCSV::::::'+ IndexFieldCSV);
         
         List<String>                    dataList                         = (List<String>)                   System.JSON.deserialize(tableData               , List<String>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr             = (List<uploadCsvFileJsonWrapper>) System.JSON.deserialize(FieldToUpdateList       , List<uploadCsvFileJsonWrapper>.class);
@@ -174,7 +165,6 @@ public with sharing class updateFieldsController {
         
         WorkSpace();
      
-        System.debug('275=====>'+csvAllDataMap);
         return csvAllDataMap;
     }
 
@@ -201,7 +191,6 @@ public with sharing class updateFieldsController {
         Map<String, Map<String,String>> dataObj = (Map<String, Map<String,String>>) JSON.deserialize(csvAllDataMap, Map<String, Map<String,String>>.class);
         System.debug('dataObje '+dataObj);
 
-        // Convert the nested Map<String, Object> into a Map<String, Map<String, String>>
 
 
 
@@ -302,12 +291,9 @@ public with sharing class updateFieldsController {
         
         WorkSpace();
         
-        // List<wrapDataList> listData = new List<wrapDataList>();
         wrapDataList pairWrapperObj = new wrapDataList();
          pairWrapperObj.theQuery = soqlQuer;
          pairWrapperObj.theMap = dataObj;
-        // listData.add(new wrapDataList(soqlQuer, dataObj));
-        // System.debug('ListData====='+listData);
         return pairWrapperObj;
     }
     
@@ -371,7 +357,6 @@ public with sharing class updateFieldsController {
                 abcList.put(id, s);
                     
             }
-            System.debug('abcList===> '+ abcList);
             for(String str : abcList.keyset()){
                 if(csvData.containsKey(str)){
                     Map<String,String> lstStr = csvData.get(str);
@@ -399,7 +384,6 @@ public with sharing class updateFieldsController {
             System.debug('Error ' + e.getMessage() + e.getLineNumber());
         }
 
-        System.debug('csvData=='+csvData);
         return csvData;
     }
     
@@ -428,7 +412,6 @@ public with sharing class updateFieldsController {
                             sobj.put('Id' , addMap.get('SFId'));
                         }
                         Schema.DisplayType fielddataType = fieldMap.get(field.SObjectField).getDescribe().getType();
-                        System.debug('fielddataType '+fielddataType);
                         if(fieldMap.get(field.SObjectField).getDescribe().isAccessible() && fieldMap.get(field.SObjectField).getDescribe().isUpdateable()){
                             if(fielddataType == Schema.DisplayType.PERCENT || fielddataType == Schema.DisplayType.CURRENCY || fielddataType == Schema.DisplayType.Double){
                                 sobj.put(field.SObjectField, Decimal.valueof(addMap.get('CSV'+field.csvfield).trim()));
@@ -448,8 +431,6 @@ public with sharing class updateFieldsController {
                                 } catch (Exception e) {
                                     return 'Error ' + e.getMessage();
                                 }
-                               // jenish gangani update datetime field
-                                // sobj.put(field.SObjectField, DATETIME.valueof(lstStr.get(listCSv)));  
                             }
                             else if(fielddataType == Schema.DisplayType.TIME){
                                  try {
@@ -467,7 +448,6 @@ public with sharing class updateFieldsController {
                             }
                             else{
                                 sobj.put(field.SObjectField, addMap.get('CSV'+field.csvfield));  
-                                // System.debug(addMap.get('CSV'+field.csvfield));
                             }                            
                         }                        
                     }
@@ -476,7 +456,6 @@ public with sharing class updateFieldsController {
                 objList.add(sobj);    
             }
         }
-        System.debug('objList===>645===>'+ objList);
         String objListValue = JSON.serialize(objList);
         return objListValue;
     }
@@ -542,11 +521,10 @@ public with sharing class updateFieldsController {
  
                 objList.add(sobj);    
         }
-        System.debug('objList==>'+ objList);
-        return JSON.serialize(objList);
+        String objListData = JSON.serialize(objList);
+        return objListData;
     }
 
-    // --------- jenish gangani 11/02
     
     
     // this method will update data using batch class
@@ -574,18 +552,16 @@ public with sharing class updateFieldsController {
         UpdateSobjectBatchable updateSObject = new UpdateSobjectBatchable(dataList, strcsvfield, selectObjectName, csvField);
         Database.executeBatch(updateSObject);
     }
-    // this method for insert record using batch class jenish gangani 11/02/23
+    // this method for insert record using batch class
     @AuraEnabled
     public static void insertRecord(String data, String FieldToUpdateList, String selectObjectName){
         System.debug('insertRecord Method');
-        System.debug('data of insertRecord===>'+ data);
 
         List<SObject>                   dataList             = (List<SObject>)                   System.JSON.deserialize(data, List<SObject>.class);
         List<uploadCsvFileJsonWrapper>  FieldToUpdateListWpr = (List<uploadCsvFileJsonWrapper>)  System.JSON.deserialize(FieldToUpdateList, List<uploadCsvFileJsonWrapper>.class);
         
         List<String> csvField = new List<String>();
         
-        // csvField.add('Id');
         for(uploadCsvFileJsonWrapper field : FieldToUpdateListWpr){
             if(!csvfield.contains(field.SObjectField)){
              	csvfield.add(field.SObjectField);   
@@ -596,7 +572,6 @@ public with sharing class updateFieldsController {
         InsertSobjectBatchable insertSObject = new InsertSobjectBatchable(dataList, strcsvfield, selectObjectName, csvField);
         Database.executeBatch(insertSObject);
     }
-    // jenish gangani 11/02/23
     
     public class pairWrapper{
         @AuraEnabled public String label{get; set;}
@@ -610,14 +585,12 @@ public with sharing class updateFieldsController {
     }
 
 
-    // -----------jenish gangani
 public class pairWrapperNew{
         @AuraEnabled public List<string> apiNameList{get; set;}
         @AuraEnabled public List<string> labelNameList{get; set;}
         @AuraEnabled public List<pairWrapper> pairWrapperList{get; set;}
         @AuraEnabled public Map<String, String> fieldMap1{get; set;}
     }
-    // -----------jenish gangani
 
     
     public class uploadCsvFileJsonWrapper{
@@ -629,40 +602,22 @@ public class pairWrapperNew{
     public class wrapDataList{
         @AuraEnabled public String theQuery{get;set;}
         @AuraEnabled public Map<String,Map<String,String>> theMap{get;set;}
-        
-        // public wrapDataList(String theQuery, Map<String,Map<String,String>> theMap){
-        //     this.theQuery   = theQuery;
-        //     this.theMap    = theMap;
-        // }
     }
     
-    // public class wrapDataSecond{
-    //     @AuraEnabled public List<SObject> theList{get;set;}
-    //     @AuraEnabled public Map<String,Map<String,String>> theMap{get;set;}
-        
-    //     public wrapDataSecond(List<SObject> theList, Map<String,Map<String,String>> theMap){
-    //         this.theList   = theList;
-    //         this.theMap    = theMap;
-    //     }
-    // }
-    // ---------jenish gangani 2/3/23
     @AuraEnabled
     public static Void sendemail(String name, String email, String subject, String body){
         try {
             List<Messaging.SingleEmailMessage> emailList = new List<Messaging.SingleEmailMessage>();
-            List<String> address = new List<String>{'ritu.p@mvclouds.com'};
+            List<String> address = new List<String>{'info@mvclouds.com'};
                 
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            System.debug('mail :'+ mail);
             mail.setSubject(subject);
             mail.setplaintextbody(body+'\n\n\nFrom '+name +'\nEmail '+email);
             mail.setToAddresses(address);
             emailList.add(mail);
-            System.debug('emailList :'+emailList);
             Messaging.sendEmail(emailList);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
-    // ---------jenish gangani 9/2/23
 }

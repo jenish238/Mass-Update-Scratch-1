@@ -132,3 +132,80 @@
 .THIS .button-css {
     display: inline-block;
 }
+
+.THIS .demo-only {
+    height: 4rem;
+}
+
+.THIS .operation {
+    margin-right: 1%;
+}
+
+.THIS .operation2 {
+    width: 70%;
+    margin-left: 15%;
+}
+
+.THIS .objectList {
+    margin-bottom: 10px;
+}
+
+.THIS .helpButton {
+    margin-right: 1%;
+}
+
+.THIS .Matching {
+    width: 70%;
+    margin-left: 15%;
+}
+
+.THIS .Data_Matching_Criteria {
+    font-size: 18px;
+}
+
+.THIS .tabel {
+    width: 30%;
+}
+
+.THIS .btage {
+    font-size: x-large;
+}
+
+.THIS .tabel2 {
+    width: 60%;
+}
+
+.THIS .sFields {
+    font-size: 18px;
+}
+
+.THIS .tabelPage {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.THIS .SFTabel {
+    float: right;
+}
+
+.THIS .SFInerTabel {
+    height: 20px;
+    width: 20px;
+    margin: 3px;
+    background-color: #c0d1f5;
+}
+
+.THIS .SFInerOne {
+    padding-left: 22px;
+}
+
+.THIS .CSVTabel {
+    float: right;
+}
+
+.THIS .CSVInerTabel {
+    height: 20px;
+    width: 20px;
+    margin: 3px;
+    background-color: #ecbbd9;
+}
