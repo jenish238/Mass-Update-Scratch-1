@@ -14,8 +14,6 @@
                                 label: storeResponse[i].split(',')[1]
                             });
                         }
-
-                        // JENISH GANGANI
                         arr.sort((a, b) => {
                             let nameA = a.label.toUpperCase(); // ignore upper and lowercase
                             let nameB = b.label.toUpperCase(); // ignore upper and lowercase
@@ -27,7 +25,6 @@
                             }
                             return 0;
                         });
-                        // JENISH GANGANI     
                         component.set("v.ObjectListMain", arr);
                     }
                 }
